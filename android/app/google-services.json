@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "36151626251",
+    "project_id": "unity-dae8e",
+    "storage_bucket": "unity-dae8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36151626251:android:02e5b7090feddbdc5f950e",
+        "android_client_info": {
+          "package_name": "com.appinventiv.ashish.unity.unity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "36151626251-4dddfg301o3aopntual2d5jep7h8n3tf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appinventiv.ashish.unity.unity",
+            "certificate_hash": "005de1b4592d33491eb05e73b63821da2bf33b4b"
+          }
+        },
+        {
+          "client_id": "36151626251-am5uvjo4vepa66pjgij7feiqf8nctaua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjUwtmSwNojwe7k4iF9XIYp66hbHO13xg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36151626251-am5uvjo4vepa66pjgij7feiqf8nctaua.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "36151626251-mpkadd70av3li31mq3r732seg6f0nnvd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.appinventiv.ashish.unity.unity"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
