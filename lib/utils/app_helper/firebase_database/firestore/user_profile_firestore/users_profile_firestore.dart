@@ -10,16 +10,17 @@ class UsersProfileFireStore {
   final storeRef = FirebaseFirestore.instance.collection("users");
 
   /// This is done to
-  Future<bool?> createUserAccount(String name, String email, String pass) async {
+  Future<bool?> createUserAccount(
+      String email, String pass) async {
     await _auth
         .createUserWithEmailAndPassword(
             email: email.toString().trim(), password: pass.trim())
         .then((value) {
-      debugPrint("Cred Added on database");
+      UserCredential u = value;
+      User? user = u.user;
+      debugPrint("Cred Added on database $user");
       return true;
-    })
-    .onError((error, stackTrace) 
-    {
+    }).onError((error, stackTrace) {
       debugPrint(
           "Error Occurred While Account Creation Email:$email\nError:$error");
       throw UnableToLogin;

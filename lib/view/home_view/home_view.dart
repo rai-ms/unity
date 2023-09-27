@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
 
@@ -51,22 +52,26 @@ class _HomeViewState extends State<HomeView> {
                       return const Text("Error");
                     } else {
                       return ListView.builder(
-                          itemExtent: 20,
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             var data = snapshot.data!.docs[index].data()
                                 as Map<String, dynamic>;
                             var mess = data["name"].toString();
                             var image = data["image"].toString();
-                            return ListTile(
-                                title: Text(mess),
-                                leading: CachedNetworkImage(
-                                  imageUrl: image,
-                                  placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ));
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                  title: Text(mess),
+                                  // leading: CachedNetworkImage(
+                                  //   imageUrl: image,
+                                  //   placeholder: (context, url) => const Center(
+                                  //       child: CircularProgressIndicator()),
+                                  //   errorWidget: (context, url, error) =>
+                                  //       const Icon(Icons.error),
+                                  // )
+                                  leading: CircleAvatar(backgroundImage: NetworkImage(image)),
+                                ),
+                            );
                           });
                     }
                   },

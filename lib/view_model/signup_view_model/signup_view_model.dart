@@ -1,8 +1,5 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,7 +11,7 @@ import '../../utils/routes/route_name.dart';
 import '../../utils/utils.dart';
 
 class SignUpViewModel extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController emailCont = TextEditingController();
   TextEditingController passCont = TextEditingController();
   TextEditingController nameCont = TextEditingController();
@@ -51,7 +48,7 @@ class SignUpViewModel extends ChangeNotifier {
     nameFocusNode.dispose();
     confPassFocusNode.dispose();
     loginButtonFocusNode.dispose();
-    formKey.currentState!.dispose();
+    //formKey.currentState!.dispose();
     super.dispose();
   }
 
@@ -64,17 +61,18 @@ class SignUpViewModel extends ChangeNotifier {
     String passwordUser = passCont.text.toString().trim();
     String nameUser = nameCont.text.toString().trim();
     String confPassUser = confPassCont.text.toString().trim();
-
+    formKey.currentState!.save();
     // Validate Form
     if (formKey.currentState!.validate() && confPassUser == passwordUser) {
       UsersProfileFireStore unityFireStoreUserProfile = UsersProfileFireStore();
 
-      await unityFireStoreUserProfile.createUserAccount(nameUser, emailUser, passwordUser).then((res) async
+      await unityFireStoreUserProfile.createUserAccount(emailUser, passwordUser).then((res) async
           {
              if (res is! UnableToLogin) {
                 // Account creation is now done, now to register user need to login with user credential, then fetch uid for reg
                 debugPrint("Account Creation done now login");
-                bool login = await unityFireStoreUserProfile.loginUser(emailUser, passwordUser);
+                /// No need to login after the creation of account user already login
+                // bool login = await unityFireStoreUserProfile.loginUser(emailUser, passwordUser);
                 String uid = _auth.currentUser!.uid;
                 DateTime now = DateTime.now();
                 String date = DateTime(now.year, now.month, now.day)
