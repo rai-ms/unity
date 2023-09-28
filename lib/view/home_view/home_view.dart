@@ -6,6 +6,7 @@ import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
 
+import '../../services/unknown_page_service.dart';
 import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
 
 class HomeView extends StatefulWidget {
@@ -16,6 +17,13 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+
+  @override
+  void initState() {
+    UnknownPageService.checkAuthHomePage(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -39,46 +47,56 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
       body: Center(
-        child: Container(
-          child: Column(
-            children: [
-              Expanded(
-                child: StreamBuilder(
-                  stream: UsersProfileFireStore.getAllUser(),
-                  builder: (context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return const Text("Error");
-                    } else {
-                      return ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            var data = snapshot.data!.docs[index].data()
-                                as Map<String, dynamic>;
-                            var mess = data["name"].toString();
-                            var image = data["image"].toString();
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                  title: Text(mess),
-                                  // leading: CachedNetworkImage(
-                                  //   imageUrl: image,
-                                  //   placeholder: (context, url) => const Center(
-                                  //       child: CircularProgressIndicator()),
-                                  //   errorWidget: (context, url, error) =>
-                                  //       const Icon(Icons.error),
-                                  // )
-                                  leading: CircleAvatar(backgroundImage: NetworkImage(image)),
-                                ),
-                            );
-                          });
-                    }
-                  },
-                ),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder(
+                stream: UsersProfileFireStore.getAllUser(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                  {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  else if (snapshot.hasError) {
+                    return const Text("Error");
+                  }
+                  else
+                  {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var data = snapshot.data!.docs[index].data()
+                              as Map<String, dynamic>;
+                          var mess = data["name"].toString().trim();
+                          var image = data["image"].toString().trim();
+                          var name = data["name"].toString().trim();
+                          var id = data["id"].toString().trim();
+
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Consumer<HomeViewModel>(
+                              builder: (context, provider, child) {
+                                return ListTile(
+                                    onTap: ()
+                                    {
+                                        Navigator.pushNamed(context, RouteName.chatView, arguments: {"name": name, "id":id, "image":image});
+                                    },
+                                    title: Text(mess),
+                                    leading: CachedNetworkImage(
+                                      imageUrl: image,
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                  );
+                              }
+                            ),
+                          );
+                        });
+                  }
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     ),);

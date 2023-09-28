@@ -160,6 +160,8 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     sizedBox(hei: 20),
                     AppRoundedButton(
+                      loading: provider.loading,
+                      focusNode: provider.loginButtonFocusNode,
                       onTap: ()
                       {
                           provider.createAccount(context);

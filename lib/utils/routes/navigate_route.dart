@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/signup_view/signup_view.dart';
-
+import '../../view/chat_view/chat_view.dart';
 import '../../view/home_view/home_view.dart';
 import '../../view/intro_view/intro_view.dart';
 import '../../view/loginView/login_view.dart';
@@ -20,6 +20,9 @@ class NavigateRoute {
         return MaterialPageRoute(builder: (context) => const IntroView());
       case RouteName.signupView:
         return MaterialPageRoute(builder: (context) => const SignUpView());
+      case RouteName.chatView:
+        Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(builder: (context) => ChatView(id: r["id"].toString(), reciever: r["name"].toString(), image: r["image"].toString()));
       default:
         return MaterialPageRoute(
             builder: (context) => const Scaffold(

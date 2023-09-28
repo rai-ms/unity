@@ -70,7 +70,7 @@ class SignUpViewModel extends ChangeNotifier {
           {
              if (res is! UnableToLogin) {
                 // Account creation is now done, now to register user need to login with user credential, then fetch uid for reg
-                debugPrint("Account Creation done now login");
+                // debugPrint("Account Creation done now login");
                 /// No need to login after the creation of account user already login
                 // bool login = await unityFireStoreUserProfile.loginUser(emailUser, passwordUser);
                 String uid = _auth.currentUser!.uid;
@@ -79,7 +79,7 @@ class SignUpViewModel extends ChangeNotifier {
                     .toString()
                     .replaceAll("00:00:00.000", "");
                 // User added/registered on this date
-                debugPrint(date);
+                // debugPrint(date);
                 UserProfileModel userProfileModel = UserProfileModel(
                     pass: passCont.text.toString().trim(),
                     email: emailCont.text.toString().trim(),
@@ -88,11 +88,11 @@ class SignUpViewModel extends ChangeNotifier {
                     name: nameCont.text.toString().trim(),
                     uid: uid);
                 unityFireStoreUserProfile.registerUser(userProfileModel).then((value) {
-                  debugPrint("Registration Success");
+                  // debugPrint("Registration Success");
                   Navigator.pushNamedAndRemoveUntil(
                       context, RouteName.homeView, (route) => false);
                 }).onError((error, stackTrace) {
-                  debugPrint("Error in registraion in View Model \nError:$error");
+                  debugPrint("Error in registration in View Model \nError:$error");
                 });
               } 
               else 
@@ -155,5 +155,13 @@ class SignUpViewModel extends ChangeNotifier {
         debugPrint("Error during Uploading and getting the url \nError:$error");
       });
     }
+  }
+
+  bool _loading = false;
+  bool get loading => _loading;
+
+  setLoading(bool val) {
+    _loading = val;
+    notifyListeners();
   }
 }

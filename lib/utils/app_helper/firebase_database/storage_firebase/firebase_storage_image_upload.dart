@@ -18,7 +18,6 @@ class FirebaseImageUpload {
   }
 
   /// It will take the refrence of the user and delete the profile image as the folder in which the user profile image is present is created using its uid
-  
   Future deleteProfileImage() async 
   {
     Reference ref = FirebaseStorage.instance.ref('/profile_pic/$uid');

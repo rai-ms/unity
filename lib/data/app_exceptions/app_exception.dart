@@ -41,6 +41,11 @@ class InvalidUrl extends AppException {
     AppException(message, AppStrings.invalidUrl);
   }
 }
+class UnauthorizedAccessException extends AppException {
+  UnauthorizedAccessException([String? message]) {
+    AppException(message, AppStrings.invalidUser);
+  }
+}
 
 class FetchDataException extends AppException {
   FetchDataException([String? message]) {

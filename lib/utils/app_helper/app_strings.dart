@@ -9,12 +9,14 @@ class AppStrings {
   static const String serverError = "Server Error";
   static const String databaseError = "Database Error";
   static const String invalidUrl = "Invalid Url";
+  static const String invalidUser = "Invalid User";
   static const String errorOccured = "Error Occured";
   static const String notValidMail = "Not Valid Mail";
   static const String id = "Id";
   static const String login = "Login";
   static const String forgetPassword = "Forget Password ?";
   static const String yourName = "Name";
+  static const String enterMessage = "Enter Message";
   static const String fullName = "Full Name";
   static const String yourEmail = "Your Email";
   static const String enterEmailAddress = "Enter Email Address";

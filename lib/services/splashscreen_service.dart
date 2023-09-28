@@ -18,4 +18,5 @@ class SplashScreenServices {
           context, RouteName.introView, (route) => false);
     }
   }
+
 }
