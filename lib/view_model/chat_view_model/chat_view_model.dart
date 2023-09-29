@@ -22,8 +22,22 @@ class ChatViewModel extends ChangeNotifier
     }
   }
 
-  getAllMessage(String receiver){
-    String sender =  _auth.currentUser!.uid.toString().trim();
-    return UsersChat.getAllMessage(sender, receiver);
+  getAllMessage(String receiver) {
+    String currentUser = _auth.currentUser!.uid;
+    String now = DateTime.now().toString();
+
+    Stream<List<MessageModel>> chats = UsersChat.getAllMessage(currentUser, receiver)
+        .map((messages) {
+      // debugPrint(messages.toString());
+      return messages.map((message){
+        // debugPrint(message.message.toString());
+         if(message.senderUID != currentUser && message.status == "u"){
+           message.status = now;
+         }
+        return message;
+      }).toList();
+    });
+    // debugPrint(chats.toString());
+    return chats;
   }
 }

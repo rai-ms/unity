@@ -5,42 +5,51 @@ import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/message_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
+import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 
+import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/app_strings.dart';
-import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
-import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
 
 class ChatView extends StatefulWidget {
-  ChatView({super.key,required this.id, required this.reciever, required this.image});
-  String id, reciever, image;
+  ChatView({super.key, required this.reciever});
+  UserProfileModel reciever;
   @override
   State<ChatView> createState() => _ChatViewState();
 }
 
 class _ChatViewState extends State<ChatView> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
       ChangeNotifierProvider(create: (context)=> ChatViewModel()),
     ], child: Scaffold(
       appBar: AppBar(
-        title: Text(widget.reciever),
+        title: Row(
+          children: [
+            CircleAvatar(
+                backgroundImage: NetworkImage(widget.reciever.image),
+                radius: 20,),
+            sizedBox(wid: 20),
+            Text(widget.reciever.name),
+          ],
+        ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children:
         [
           Expanded(
-            flex: 8,
             child: Consumer<ChatViewModel>(
               builder: (context, provider, child)
               {
-                return StreamBuilder<List<MessageModel>>(
-                    stream: provider.getAllMessage(widget.id),
-                    builder: (context,AsyncSnapshot snapshot)
+                return StreamBuilder <List<MessageModel>> (
+                    stream: provider.getAllMessage(widget.reciever.uid),
+                    builder: (context,AsyncSnapshot<List<MessageModel>> snapshot)
                     {
-                      List<MessageModel> messages = snapshot.data;
+                      List<MessageModel>? messages = snapshot.data;
                       if(!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting){
                         return const CircularProgressIndicator();
                       }
@@ -49,13 +58,50 @@ class _ChatViewState extends State<ChatView> {
                         return const Center(child: Text("Error"),);
                       }
                       else {
-                        if(messages.isEmpty) return const Center(child: CircularProgressIndicator());
                         return ListView.builder(itemBuilder: (context,index){
-                          return ListTile(
-                            title: Text(messages[index].message ?? "message"),
-                            trailing: Text(messages[index].time.substring(11, 16) ?? "Time"),
+                          bool isSender = messages[index].senderUID == _auth.currentUser!.uid;
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                maxWidth: 200,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:isSender? MainAxisAlignment.end : MainAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                    children:
+                                    [
+                                      Card(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 270
+                                          ),
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: !isSender?[AppColors.blueSplashScreen, AppColors.blueAccent]:[AppColors.blueAccent, AppColors.blueSplashScreen],
+                                              ),
+                                              borderRadius: BorderRadius.circular(10)
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                            children: [
+                                              Text(messages[index].message, style: AppStyle.chatStyle,),
+                                              if(isSender) Icon(Icons.check,color: messages[index].status == "u" ? AppColors.grey : AppColors.blue,size: 20,)
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Text(messages[index].time.substring(11, 16),  style: AppStyle.blackNormal15,),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
-                        }, itemCount: messages.length,);
+                        }, itemCount: messages!.length,);
                       }
                 });
               }
@@ -70,7 +116,7 @@ class _ChatViewState extends State<ChatView> {
                     controller: provider.messCont,
                     focusNode: provider.messFocus,
                     onFieldSubmitted: (_) {
-                      provider.sendMessage(widget.id);
+                      provider.sendMessage(widget.reciever.uid);
                     },
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(
@@ -85,16 +131,13 @@ class _ChatViewState extends State<ChatView> {
                     ),
                   ),),
                   sizedBox(wid: 5),
-                  Expanded(
-                    flex: 2,
-                    child: InkWell(
-                      onTap:(){
-                        provider.sendMessage(widget.id);
-                      },
-                      child: const CircleAvatar(
-                        radius: 35,
-                        child: Center(child: Icon(Icons.send, color: AppColors.blueSplashScreen,)),
-                      ),
+                  InkWell(
+                    onTap:(){
+                      provider.sendMessage(widget.reciever.uid);
+                    },
+                    child: const CircleAvatar(
+                      radius: 35,
+                      child: Center(child: Icon(Icons.send, color: AppColors.blueSplashScreen,)),
                     ),
                   ),
                 ],
@@ -105,9 +148,3 @@ class _ChatViewState extends State<ChatView> {
     ),);
   }
 }
-
-// ListView.builder(itemBuilder: (context, index){
-// return const SizedBox(
-// height: 50,
-// child: Card());
-// }, itemCount: 20,);

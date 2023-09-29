@@ -13,5 +13,16 @@ class UserProfileModel
       "email":email
     };
   }
+  factory UserProfileModel.fromJson(Map<String, dynamic> json) {
+    return UserProfileModel(
+      uid: json['id'],
+      name: json['name'],
+      pass: json['pass'],
+      image: json['image'],
+      joinDate: json['joinDate'],
+      email: json['email'],
+    );
+  }
+
 
 }

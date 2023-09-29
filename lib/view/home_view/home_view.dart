@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:unity/model/firebase/user_profile_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
@@ -17,12 +18,13 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
+  FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     UnknownPageService.checkAuthHomePage(context);
     super.initState();
   }
+  String username = "";
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,15 @@ class _HomeViewState extends State<HomeView> {
     ],
     child: Scaffold(
       appBar: AppBar(
+        title: Row(
+          children: [
+            Consumer<HomeViewModel>(
+              builder: (context,provider, child) {
+                return Text("User is:${provider.appLoginUser!.name}");
+              }
+            )
+          ],
+        ),
         actions: [
           Consumer<HomeViewModel>(builder: (context, provider, child) {
             return InkWell(
@@ -43,57 +54,55 @@ class _HomeViewState extends State<HomeView> {
               },
               child: Icon(Icons.logout_outlined),
             );
-          })
+          }),
         ],
       ),
       body: Center(
         child: Column(
           children: [
             Expanded(
-              child: StreamBuilder(
-                stream: UsersProfileFireStore.getAllUser(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                  {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  else if (snapshot.hasError) {
-                    return const Text("Error");
-                  }
-                  else
-                  {
-                    return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          var data = snapshot.data!.docs[index].data()
-                              as Map<String, dynamic>;
-                          var mess = data["name"].toString().trim();
-                          var image = data["image"].toString().trim();
-                          var name = data["name"].toString().trim();
-                          var id = data["id"].toString().trim();
-
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Consumer<HomeViewModel>(
-                              builder: (context, provider, child) {
-                                return ListTile(
-                                    onTap: ()
-                                    {
-                                        Navigator.pushNamed(context, RouteName.chatView, arguments: {"name": name, "id":id, "image":image});
-                                    },
-                                    title: Text(mess),
-                                    leading: CachedNetworkImage(
-                                      imageUrl: image,
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                  );
-                              }
-                            ),
-                          );
-                        });
-                  }
-                },
+              child: Consumer<HomeViewModel>(
+                builder: (context, provider, child) {
+                  return StreamBuilder<List<UserProfileModel>>(
+                    stream: provider.getAllUser(),
+                    builder: (context, AsyncSnapshot<List<UserProfileModel>> snapshot) {
+                      List<UserProfileModel>? users = snapshot.data;
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                      {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      else if (snapshot.hasError) {
+                        return const Text("Error");
+                      }
+                      else
+                      {
+                        return ListView.builder(
+                            itemCount: users!.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Consumer<HomeViewModel>(
+                                  builder: (context, provider, child) {
+                                    return ListTile(
+                                        onTap: ()
+                                        {
+                                            Navigator.pushNamed(context, RouteName.chatView, arguments: {"user":users[index]});
+                                        },
+                                        title: Text(users[index].name),
+                                        leading: CachedNetworkImage(
+                                          imageUrl: users[index].image,
+                                          height: 50,
+                                          width: 50,
+                                        ),
+                                      );
+                                  }
+                                ),
+                              );
+                            });
+                      }
+                    },
+                  );
+                }
               ),
             ),
           ],

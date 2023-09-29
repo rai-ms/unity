@@ -60,11 +60,27 @@ class AppStyle {
     );
   }
 
+  static TextStyle? get blackNormal20 {
+    return const TextStyle(
+      color: AppColors.black,
+      fontSize: 17,
+      fontWeight: FontWeight.w400,
+    );
+  }
+
   static TextStyle? get whiteMedium16 {
     return const TextStyle(
       color: AppColors.white,
       fontSize: 14,
       fontWeight: FontWeight.w500,
+    );
+  }
+
+  static TextStyle? get chatStyle {
+    return const TextStyle(
+      color: AppColors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
     );
   }
 

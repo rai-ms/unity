@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unity/data/app_exceptions/app_exception.dart';
-
 import '../../../../../model/firebase/user_profile_model.dart';
 
 class UsersProfileFireStore {
@@ -61,24 +60,26 @@ class UsersProfileFireStore {
 
   static Stream<List<UserProfileModel>> getAllUsers() {
     final firestoreStream = storeRef.snapshots();
-
     return firestoreStream.map((QuerySnapshot<Map<String, dynamic>> snapshot) {
       final List<UserProfileModel> users = [];
-
       for (final DocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
         final Map<String, dynamic> data = doc.data()!;
-        final UserProfileModel user = UserProfileModel(
-          uid: data['id'],
-          name: data['name'],
-          pass: data['pass'],
-          image: data['image'],
-          joinDate: data['joinDate'],
-          email: data['email'],
-        );
-        users.add(user);
+        users.add(UserProfileModel.fromJson(data));
       }
-
       return users;
+    });
+  }
+
+  static Stream<UserProfileModel?> getCurrentUserProfile(String currentUserUID) {
+    final firestoreStream = storeRef.doc(currentUserUID).snapshots();
+    return firestoreStream.map((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+      if (snapshot.exists) {
+        final Map<String, dynamic> data = snapshot.data()!;
+        return UserProfileModel.fromJson(data);
+      } else {
+        // If the user profile document doesn't exist, return null.
+        return null;
+      }
     });
   }
 

@@ -20,15 +20,14 @@ class UsersChat
 
   static Stream<List<MessageModel>> getAllMessage(String senderUID, String receiverUID) {
     final chatRoomId = getChatRoomId(senderUID, receiverUID);
-    debugPrint(chatRoomId);
+    // debugPrint(chatRoomId);
     final messageCollection = storeRef.doc(chatRoomId).collection("messages");
     // Converting
-    return messageCollection.orderBy("time").snapshots().map((querySnapshot) {
-      // debugPrint(querySnapshot.docs.toString());
+    return messageCollection.orderBy("time").snapshots().map((querySnapshot)
+    {
       final List<MessageModel> messageList = [];
       for (final doc in querySnapshot.docs) {
         final Map<String, dynamic> data = doc.data();
-        // debugPrint("Message:"+data.toString());
         final MessageModel message = MessageModel.fromJson(data);
         messageList.add(message);
       }

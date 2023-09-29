@@ -22,7 +22,7 @@ class NavigateRoute {
         return MaterialPageRoute(builder: (context) => const SignUpView());
       case RouteName.chatView:
         Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(builder: (context) => ChatView(id: r["id"].toString(), reciever: r["name"].toString(), image: r["image"].toString()));
+        return MaterialPageRoute(builder: (context) => ChatView(reciever: r["user"]));
       default:
         return MaterialPageRoute(
             builder: (context) => const Scaffold(

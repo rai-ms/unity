@@ -16,7 +16,7 @@ class MessageModel {
   int visibleNo;
   String chatID;
   String status;
-  int deliveryStatus;
+  String deliveryStatus;
   int star;
 
   /// This is the model of every message
@@ -31,7 +31,7 @@ class MessageModel {
     this.star = 0,
     required this.chatID,
     required this.status,
-    this.deliveryStatus = 0,
+    this.deliveryStatus = "0",
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
