@@ -73,24 +73,31 @@ class _ChatViewState extends State<ChatView> {
                                     crossAxisAlignment:isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                     children:
                                     [
-                                      Card(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 270
-                                          ),
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                colors: !isSender?[AppColors.blueSplashScreen, AppColors.blueAccent]:[AppColors.blueAccent, AppColors.blueSplashScreen],
-                                              ),
-                                              borderRadius: BorderRadius.circular(10)
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                                            children: [
-                                              Text(messages[index].message, style: AppStyle.chatStyle,),
-                                              if(isSender) Icon(Icons.check,color: messages[index].status == "u" ? AppColors.grey : AppColors.blue,size: 20,)
-                                            ],
+                                      InkWell(
+                                        onTap: ()
+                                        {
+                                          provider.deleteMessage(messages[index], 0);
+                                        },
+                                        onDoubleTap: (){},
+                                        child: Card(
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 270
+                                            ),
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  colors: !isSender?[AppColors.blueSplashScreen, AppColors.blueAccent]:[AppColors.blueAccent, AppColors.blueSplashScreen],
+                                                ),
+                                                borderRadius: BorderRadius.circular(10)
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                              children: [
+                                                Text(messages[index].message, style: AppStyle.chatStyle,),
+                                                if(isSender) Icon(messages[index].status == "u"? Icons.check_circle_outline: Icons.check_circle,color: AppColors.yellow,size: 20,)
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

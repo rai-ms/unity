@@ -10,8 +10,8 @@ class MessageModel {
   int isForwarded;
 
   /// if [visibleNo] == 0? message won't be visible to anyone,
-  /// if [visibleNo] == 1? message will only be visible to receiver only
-  /// if [visibleNo] == 2? message will only be visible to sender only
+  /// if [visibleNo] == 1? message will only be visible to receiver
+  /// if [visibleNo] == 2? message will only be visible to sender
   /// if [visibleNo] == 3? message will be visible to everyone
   int visibleNo;
   String chatID;

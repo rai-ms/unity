@@ -22,7 +22,7 @@ class ChatViewModel extends ChangeNotifier
     }
   }
 
-  getAllMessage(String receiver) {
+  getAllMessage(String receiver)  {
     String currentUser = _auth.currentUser!.uid;
     String now = DateTime.now().toString();
 
@@ -33,6 +33,8 @@ class ChatViewModel extends ChangeNotifier
         // debugPrint(message.message.toString());
          if(message.senderUID != currentUser && message.status == "u"){
            message.status = now;
+           // debugPrint(now.toString() + message.chatID);
+           UsersChat.updateMessageStatus(message.senderUID,message.receiverUID , now, message.chatID).then((value){}).onError((error, stackTrace){});
          }
         return message;
       }).toList();
@@ -40,4 +42,10 @@ class ChatViewModel extends ChangeNotifier
     // debugPrint(chats.toString());
     return chats;
   }
+
+  deleteMessage(MessageModel messageModel, int code)
+  {
+    UsersChat.deleteMessage(messageModel.receiverUID, messageModel.senderUID,messageModel.chatID, code).then((value){}).onError((error, stackTrace){});
+  }
+
 }

@@ -45,4 +45,47 @@ class UsersChat
         throw InvalidUrl(error.toString());
     });
   }
+
+  static Future<void> updateMessageStatus(String receiver, String sender, String newStatus, String chatID) async {
+    final chatRoomId = getChatRoomId(sender, receiver); // Extract chatRoomId from chatID
+    // debugPrint("ChatRoomId is $chatRoomId");
+    final messageCollection = storeRef.doc(chatRoomId).collection("messages");
+    final messageDoc = await messageCollection.doc(chatID).get();
+    // debugPrint("Message is going to update");
+    if (messageDoc.exists) {
+      // Update the message's status field
+      // debugPrint("Doc exist");
+      await messageCollection.doc(chatID).update({"status": newStatus}).then((value)
+      {
+        // debugPrint("Message Updated");
+      }).onError((error, stackTrace){
+        // debugPrint("Message Updation failed");
+      });
+
+    }
+  }
+
+
+  static Future<void> deleteMessage(String receiver, String sender, String chatID, int code) async {
+    final chatRoomId = getChatRoomId(sender, receiver); // Extract chatRoomId from chatID
+    // debugPrint("ChatRoomId is $chatRoomId");
+    final messageCollection = storeRef.doc(chatRoomId).collection("messages");
+    final messageDoc = await messageCollection.doc(chatID).get();
+    // debugPrint("Message is going to update");
+    if (messageDoc.exists) {
+      // Update the message's status field
+      // debugPrint("Doc exist");
+      await messageCollection.doc(chatID).update({"visibleNo": code}).then((value)
+      {
+        // debugPrint("Message Updated");
+      }).onError((error, stackTrace){
+        // debugPrint("Message Updation failed");
+      });
+
+    }
+  }
+
+  /// TODO
+  static Future<void> deleteWholeMessage() async
+  {}
 }
