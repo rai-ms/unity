@@ -14,9 +14,11 @@ class ChatViewModel extends ChangeNotifier
   {
     String mess = messCont.text.toString().trim();
     messCont.clear();
-    String time = DateTime.now().toString();
+    DateTime now =  DateTime.now();
+    String time = now.toString();
+    String chatID = now.millisecondsSinceEpoch.toString();
     if(mess.isNotEmpty){
-      UsersChat.sendMessage(MessageModel(message: mess, senderUID: _auth.currentUser!.uid, time: time, receiverUID: receiver, chatID: time, status: "u",));
+      UsersChat.sendMessage(MessageModel(message: mess, senderUID: _auth.currentUser!.uid, time: time, receiverUID: receiver, chatID: chatID, status: "u",));
     }
   }
 

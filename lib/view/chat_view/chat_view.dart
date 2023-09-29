@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
@@ -7,6 +8,8 @@ import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 
 import '../../utils/app_helper/app_strings.dart';
+import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
+import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
 
 class ChatView extends StatefulWidget {
   ChatView({super.key,required this.id, required this.reciever, required this.image});
@@ -33,8 +36,8 @@ class _ChatViewState extends State<ChatView> {
             child: Consumer<ChatViewModel>(
               builder: (context, provider, child)
               {
-                return StreamBuilder(
-                    stream: provider.getAllMessage(widget.reciever),
+                return StreamBuilder<List<MessageModel>>(
+                    stream: provider.getAllMessage(widget.id),
                     builder: (context,AsyncSnapshot snapshot)
                     {
                       List<MessageModel> messages = snapshot.data;
@@ -50,7 +53,7 @@ class _ChatViewState extends State<ChatView> {
                         return ListView.builder(itemBuilder: (context,index){
                           return ListTile(
                             title: Text(messages[index].message ?? "message"),
-                            leading: Text(messages.length.toString() ?? "Time"),
+                            trailing: Text(messages[index].time.substring(11, 16) ?? "Time"),
                           );
                         }, itemCount: messages.length,);
                       }

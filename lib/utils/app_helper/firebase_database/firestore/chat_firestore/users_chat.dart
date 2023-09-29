@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:unity/data/app_exceptions/app_exception.dart';
-
 import '../../../../../model/firebase/message_model.dart';
 
 class UsersChat
@@ -20,12 +20,15 @@ class UsersChat
 
   static Stream<List<MessageModel>> getAllMessage(String senderUID, String receiverUID) {
     final chatRoomId = getChatRoomId(senderUID, receiverUID);
+    debugPrint(chatRoomId);
     final messageCollection = storeRef.doc(chatRoomId).collection("messages");
-
+    // Converting
     return messageCollection.orderBy("time").snapshots().map((querySnapshot) {
+      // debugPrint(querySnapshot.docs.toString());
       final List<MessageModel> messageList = [];
       for (final doc in querySnapshot.docs) {
-        final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        final Map<String, dynamic> data = doc.data();
+        // debugPrint("Message:"+data.toString());
         final MessageModel message = MessageModel.fromJson(data);
         messageList.add(message);
       }
@@ -36,30 +39,11 @@ class UsersChat
   static Future<void> sendMessage(MessageModel message) async {
     final chatRoomId = getChatRoomId(message.senderUID, message.receiverUID);
     final messageCollection = storeRef.doc(chatRoomId).collection("messages");
-    String time = DateTime.now().millisecondsSinceEpoch.toString();
-    messageCollection.doc(time).set(message.toMap()).then((value)
+    messageCollection.doc(message.chatID).set(message.toMap()).then((value)
     {
 
     }).onError((error, stackTrace){
-
+        throw InvalidUrl(error.toString());
     });
-    // await messageCollection.add(message.toMap())
   }
-  /// No need to create chat room, if chat room  not exist, it will create automatically
-  // static Future<void> createChatRoom(String senderUID, String receiverUID) async {
-  //   final chatRoomId = getChatRoomId(senderUID, receiverUID);
-  //   String time = DateTime.now().millisecondsSinceEpoch.toString();
-  //   // Check if the chat room already exists, and create it, if not
-  //   final chatRoomDoc = storeRef.doc(chatRoomId);
-  //
-  //   if (!(await chatRoomDoc.get()).exists) {
-  //     // Create the chat room with some initial data if needed
-  //     MessageModel model = MessageModel(message: "Welcome to the Unity", senderUID: senderUID, time: time, receiverUID: receiverUID, chatID: chatRoomId, status: "Welcome");
-  //     await chatRoomDoc.set(model.toMap()).then((value)
-  //     {
-  //     }).onError((error, stackTrace){
-  //       throw FetchDataException;
-  //     });
-  //   }
-  // }
 }
