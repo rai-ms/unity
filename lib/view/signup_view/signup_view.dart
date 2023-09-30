@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:unity/view_model/signup_view_model/signup_view_model.dart';
 import '../../global/global.dart';

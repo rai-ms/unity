@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
+import 'package:unity/view/home_view/widgets/user_profile_dialog.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
 import '../../services/unknown_page_service.dart';
 
@@ -87,20 +88,25 @@ class _HomeViewState extends State<HomeView> {
                                             arguments: {"user": users[index]});
                                       },
                                       title: Text(users[index].name),
-                                      leading: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: AppColors
-                                                .blueSplashScreen, // Set your desired border color here
-                                            width: 2.0, // Set the border width
+                                      leading: InkWell(
+                                        onTap: (){
+                                          showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users[index],)));
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: AppColors
+                                                  .blueSplashScreen, // Set your desired border color here
+                                              width: 2.0, // Set the border width
+                                            ),
                                           ),
-                                        ),
-                                        child: ClipOval(
-                                          child: CachedNetworkImage(
-                                            imageUrl: users[index].image,
-                                            height: 50,
-                                            width: 50,
+                                          child: ClipOval(
+                                            child: CachedNetworkImage(
+                                              imageUrl: users[index].image,
+                                              height: 50,
+                                              width: 50,
+                                            ),
                                           ),
                                         ),
                                       ),
