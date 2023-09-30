@@ -36,18 +36,17 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      message: json['message'],
-      img: json['img'],
-      senderUID: json['senderUID'],
-      time: json['time'],
-      receiverUID: json['receiverUID'],
-      isForwarded: json['isForwarded'] ?? 0,
-      visibleNo: json['visibleNo'] ?? 3,
-      chatID: json['chatID'],
-      status: json['status'],
-      deliveryStatus: json['deliveryStatus'],
-      star:json['star'] ?? 0
-    );
+        message: json['message'],
+        img: json['img'],
+        senderUID: json['senderUID'],
+        time: json['time'],
+        receiverUID: json['receiverUID'],
+        isForwarded: json['isForwarded'] ?? 0,
+        visibleNo: json['visibleNo'] ?? 3,
+        chatID: json['chatID'],
+        status: json['status'],
+        deliveryStatus: json['deliveryStatus'],
+        star: json['star'] ?? 0);
   }
 
   Map<String, dynamic> toMap() {
@@ -62,7 +61,7 @@ class MessageModel {
       'chatID': chatID,
       'status': status,
       'deliveryStatus': deliveryStatus,
-      'star':star
+      'star': star
     };
   }
 }

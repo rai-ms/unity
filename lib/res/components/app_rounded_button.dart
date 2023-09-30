@@ -12,12 +12,13 @@ class AppRoundedButton extends StatelessWidget {
   Color? textColor = AppColors.white;
 
   AppRoundedButton(
-      {super.key,this.buttonColor,
-        required this.onTap,
-        required this.title,
-        this.textColor,
-        this.focusNode,
-        this.loading = false});
+      {super.key,
+      this.buttonColor,
+      required this.onTap,
+      required this.title,
+      this.textColor,
+      this.focusNode,
+      this.loading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,19 @@ class AppRoundedButton extends StatelessWidget {
           color: buttonColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Center(child: loading? const CircularProgressIndicator(color: AppColors.white,) : Text(title,style:TextStyle(color: textColor, fontSize: 20, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400),)),
+        child: Center(
+            child: loading
+                ? const CircularProgressIndicator(
+                    color: AppColors.white,
+                  )
+                : Text(
+                    title,
+                    style: TextStyle(
+                        color: textColor,
+                        fontSize: 20,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w400),
+                  )),
       ),
     );
   }

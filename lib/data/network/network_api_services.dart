@@ -8,7 +8,6 @@ import '../app_exceptions/app_exception.dart';
 import 'base_api_service.dart';
 
 class NetworkApiServices extends BaseApiServices {
-  
   @override
   Future getAPI(String url) async {
     http.Response res;
@@ -23,8 +22,8 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-  Future postAPI(String url, dynamic data)async {
-     http.Response res;
+  Future postAPI(String url, dynamic data) async {
+    http.Response res;
     try {
       res = await http.post(Uri.parse(url), body: jsonEncode(data));
       return returnResponse(res);

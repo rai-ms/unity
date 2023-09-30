@@ -22,9 +22,10 @@ class AppStrings {
   static const String enterEmailAddress = "Enter Email Address";
   static const String password = "Password";
   static const String pass = "Password";
-  static const String errorDataType = "Error DataType";
+  static const String errorDataType = "$error DataType";
   static const String na = "N/A";
-  static const String errorLogin = "Error Login";
+  static const String errorLogin = "$error Login";
+  static const String error = "Error";
   static const String signIn = "Log In";
   static const String hello = "Hello!";
   static const String createAnAccount = "Create an account to continue";
@@ -39,5 +40,4 @@ class AppStrings {
   static const String reEnterPassword = "Re-Enter Password";
   static const String takingMoreTime = "Taking more time ";
   static const String unableToFetchData = "Unable to fetch data ";
-
 }

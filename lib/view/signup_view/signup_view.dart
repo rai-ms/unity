@@ -17,26 +17,27 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers:
-      [
+      providers: [
         ChangeNotifierProvider(create: (context) => SignUpViewModel()),
       ],
-      child: Scaffold(
-        body: Center(
-          child: SingleChildScrollView(
-            child: Consumer<SignUpViewModel>(builder: (context, provider, child){
+      child: Scaffold(body: Center(
+        child: SingleChildScrollView(
+          child: Consumer<SignUpViewModel>(
+            builder: (context, provider, child) {
               return Form(
                 key: provider.formKey,
-                child:  Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     sizedBox(hei: 50),
-                    Text(AppStrings.createAnAccount, style: AppStyle.blueBold20,),
+                    Text(
+                      AppStrings.createAnAccount,
+                      style: AppStyle.blueBold20,
+                    ),
                     sizedBox(hei: 20),
                     SizedBox(
                       height: 100,
@@ -44,22 +45,36 @@ class _SignUpViewState extends State<SignUpView> {
                       child: Center(
                         child: Stack(
                           children: [
-                            const CircleAvatar(
-                              radius: 50,
-                              backgroundImage: null,
-                            ),
+                            InkWell(
+                                onTap: () {
+                                  provider.requestPermission();
+                                },
+                                child: !provider.isPicked
+                                    ? CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage:
+                                            NetworkImage(provider.imgurl),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage:
+                                            FileImage(provider.pickedImage!),
+                                      )),
                             Align(
                               alignment: Alignment.bottomLeft,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: InkWell(
-                                    onTap: (){
-                                      
+                                    onTap: () {
+                                      provider.requestPermission();
                                     },
-                                    child: const Icon(Icons.camera_alt_outlined, color: AppColors.blueAccent,size: 25,)),
+                                    child: const Icon(
+                                      Icons.camera_alt_outlined,
+                                      color: AppColors.blueAccent,
+                                      size: 25,
+                                    )),
                               ),
                             ),
-
                           ],
                         ),
                       ),
@@ -73,10 +88,12 @@ class _SignUpViewState extends State<SignUpView> {
                         provider.emailFieldSubmitted(context);
                       },
                       decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.person, color:  AppColors.blueSplashScreen,),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               borderSide:
-                              BorderSide(width: 2, color: AppColors.black)),
+                                  BorderSide(width: 2, color: AppColors.black)),
                           hintText: AppStrings.yourName,
                           label: Text(AppStrings.fullName),
                           constraints: BoxConstraints(
@@ -90,13 +107,16 @@ class _SignUpViewState extends State<SignUpView> {
                       focusNode: provider.emailFocusNode,
                       validator: Utils.isValidEmail,
                       onFieldSubmitted: (_) {
-                        Utils.changeFocus(context, provider.emailFocusNode, provider.passFocusNode);
+                        Utils.changeFocus(context, provider.emailFocusNode,
+                            provider.passFocusNode);
                       },
-                      decoration:  const InputDecoration(
+                      decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.email_outlined, color:  AppColors.blueSplashScreen,),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               borderSide:
-                              BorderSide(width: 2, color: AppColors.black)),
+                                  BorderSide(width: 2, color: AppColors.black)),
                           hintText: AppStrings.enterEmailAddress,
                           label: Text(AppStrings.yourEmail),
                           constraints: BoxConstraints(
@@ -110,20 +130,25 @@ class _SignUpViewState extends State<SignUpView> {
                       focusNode: provider.passFocusNode,
                       validator: Utils.isValidPass,
                       onFieldSubmitted: (_) {
-                        Utils.changeFocus(context, provider.passFocusNode, provider.confPassFocusNode);
+                        Utils.changeFocus(context, provider.passFocusNode,
+                            provider.confPassFocusNode);
                       },
                       obscuringCharacter: "*",
                       obscureText: provider.obsText,
                       decoration: InputDecoration(
-                        suffixIcon: InkWell(
-                            onTap: (){
-                              provider.passShowHide();
-                            },
-                            child: Icon(provider.obsText ? Icons.visibility_outlined : Icons.visibility_off_outlined)),
+                          prefixIcon: const Icon(Icons.password, color:  AppColors.blueSplashScreen,),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                provider.passShowHide();
+                              },
+                              child: Icon(provider.obsText
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined)),
                           border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               borderSide:
-                              BorderSide(width: 2, color: AppColors.black)),
+                                  BorderSide(width: 2, color: AppColors.black)),
                           hintText: AppStrings.password,
                           label: const Text(AppStrings.password),
                           constraints: const BoxConstraints(
@@ -137,20 +162,25 @@ class _SignUpViewState extends State<SignUpView> {
                       focusNode: provider.confPassFocusNode,
                       validator: Utils.isValidPass,
                       onFieldSubmitted: (_) {
-                        Utils.changeFocus(context, provider.confPassFocusNode, provider.loginButtonFocusNode);
+                        Utils.changeFocus(context, provider.confPassFocusNode,
+                            provider.loginButtonFocusNode);
                       },
                       obscuringCharacter: "*",
                       obscureText: provider.obsText,
                       decoration: InputDecoration(
-                        suffixIcon: InkWell(
-                            onTap: (){
-                              provider.passShowHide();
-                            },
-                            child: Icon(provider.obsText ? Icons.visibility_outlined : Icons.visibility_off_outlined)),
+                          prefixIcon: const Icon(Icons.password, color:  AppColors.blueSplashScreen,),
+                          suffixIcon: InkWell(
+                              onTap: () {
+                                provider.passShowHide();
+                              },
+                              child: Icon(provider.obsText
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined)),
                           border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                               borderSide:
-                              BorderSide(width: 2, color: AppColors.black)),
+                                  BorderSide(width: 2, color: AppColors.black)),
                           hintText: AppStrings.confirmPassword,
                           label: const Text(AppStrings.reEnterPassword),
                           constraints: const BoxConstraints(
@@ -162,17 +192,20 @@ class _SignUpViewState extends State<SignUpView> {
                     AppRoundedButton(
                       loading: provider.loading,
                       focusNode: provider.loginButtonFocusNode,
-                      onTap: ()
-                      {
-                          provider.createAccount(context);
+                      onTap: () {
+                        provider.createAccount(context);
                       },
-                      title: AppStrings.createAccount,buttonColor: AppColors.blueSplashScreen,textColor: AppColors.white,)
+                      title: AppStrings.createAccount,
+                      buttonColor: AppColors.blueSplashScreen,
+                      textColor: AppColors.white,
+                    )
                   ],
                 ),
               );
-            },),
+            },
           ),
-        )
-    ),);
+        ),
+      )),
+    );
   }
 }

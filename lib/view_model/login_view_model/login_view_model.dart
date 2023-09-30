@@ -12,16 +12,12 @@ class LoginViewModel extends ChangeNotifier {
   FocusNode buttonFocusNode = FocusNode();
   GlobalKey formkey = GlobalKey();
 
-
-
   bool _obsText = false;
   bool get obsText => _obsText;
-  passShowHide()
-  {
+  passShowHide() {
     _obsText = !_obsText;
     notifyListeners();
   }
-
 
   bool _loading = false;
   bool get loading => _loading;
@@ -30,8 +26,6 @@ class LoginViewModel extends ChangeNotifier {
     _loading = val;
     notifyListeners();
   }
-
-
 
   login(context) {
     setLoading(true);

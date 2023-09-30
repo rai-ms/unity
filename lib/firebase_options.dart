@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '36151626251',
     projectId: 'unity-dae8e',
     storageBucket: 'unity-dae8e.appspot.com',
-    iosClientId: '36151626251-mpkadd70av3li31mq3r732seg6f0nnvd.apps.googleusercontent.com',
+    iosClientId:
+        '36151626251-mpkadd70av3li31mq3r732seg6f0nnvd.apps.googleusercontent.com',
     iosBundleId: 'com.appinventiv.ashish.unity.unity',
   );
 }

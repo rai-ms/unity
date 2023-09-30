@@ -12,7 +12,7 @@ class AppStyle {
     );
   }
 
-  static TextStyle? get blackBold16  {
+  static TextStyle? get blackBold16 {
     return const TextStyle(
       color: AppColors.black,
       fontSize: 14,
@@ -20,7 +20,7 @@ class AppStyle {
     );
   }
 
-  static TextStyle? get yellowBold16  {
+  static TextStyle? get yellowBold16 {
     return const TextStyle(
       color: AppColors.yellow,
       fontSize: 22,
@@ -108,6 +108,7 @@ class AppStyle {
       fontWeight: FontWeight.w700,
     );
   }
+
   static TextStyle get blueNormal {
     return const TextStyle(
       color: AppColors.blue,
@@ -150,5 +151,4 @@ class AppStyle {
       fontWeight: FontWeight.w400,
     );
   }
-
 }

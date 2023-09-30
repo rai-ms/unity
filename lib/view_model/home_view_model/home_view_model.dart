@@ -6,7 +6,7 @@ import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_
 import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   UsersProfileFireStore? user;
   signOut() {
     _auth.signOut();
@@ -14,23 +14,18 @@ class HomeViewModel extends ChangeNotifier {
 
   int countUnseenMessages = 0;
 
-
-
   getAllMessage(String receiver) {
     countUnseenMessages = 0;
     String currentUser = _auth.currentUser!.uid.toString().trim();
     String now = DateTime.now().toString();
-    Stream<List<MessageModel>> chats = UsersChat.getAllMessage(currentUser, receiver)
-        .map((messages) {
-      return messages.map((message)
-      {
-        if(message.senderUID != currentUser){
-          if(message.deliveryStatus == "0")
-          {
+    Stream<List<MessageModel>> chats =
+        UsersChat.getAllMessage(currentUser, receiver).map((messages) {
+      return messages.map((message) {
+        if (message.senderUID != currentUser) {
+          if (message.deliveryStatus == "0") {
             message.deliveryStatus = now;
             countUnseenMessages++;
-          }
-          else if(message.status == "u"){
+          } else if (message.status == "u") {
             countUnseenMessages++;
           }
         }
@@ -39,10 +34,11 @@ class HomeViewModel extends ChangeNotifier {
     });
     return chats;
   }
-  getAllUser()
-  {
+
+  getAllUser() {
     return UsersProfileFireStore.getAllUsers();
   }
+
 // UserProfileModel
   @override
   void dispose() {
@@ -50,17 +46,20 @@ class HomeViewModel extends ChangeNotifier {
     isLogin = false;
     super.dispose();
   }
+
   UserProfileModel? _appLoginUser;
   bool isLogin = false;
-  UserProfileModel? get appLoginUser{
-    if(!isLogin){
+  UserProfileModel? get appLoginUser {
+    if (!isLogin) {
       isLogin = true;
       getCurrentUser();
     }
     return _appLoginUser;
   }
+
   void getCurrentUser() {
-    UsersProfileFireStore.getCurrentUserProfile(_auth.currentUser!.uid).listen((profile) {
+    UsersProfileFireStore.getCurrentUserProfile(_auth.currentUser!.uid)
+        .listen((profile) {
       // This callback will be called whenever the profile data changes or is fetched.
       if (profile != null) {
         // Profile data is available.

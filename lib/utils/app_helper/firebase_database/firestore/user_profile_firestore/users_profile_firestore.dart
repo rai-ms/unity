@@ -9,20 +9,20 @@ class UsersProfileFireStore {
   static final storeRef = FirebaseFirestore.instance.collection("users");
 
   /// This is done to
-  Future<bool?> createUserAccount(String email, String pass) async
-  {
+  Future<bool?> createUserAccount(String email, String pass) async {
     await _auth
-        .createUserWithEmailAndPassword(email: email.toString().trim(), password: pass.toString().trim())
+        .createUserWithEmailAndPassword(
+            email: email.toString().trim(), password: pass.toString().trim())
         .then((value) {
-                UserCredential u = value;
-                User? user = u.user;
-                // debugPrint("Cred Added on database $user");
-                return true;
-          }).onError((error, stackTrace) {
-            debugPrint(
-                "Error Occurred While Account Creation Email:$email\nError:$error");
-            throw UnableToLogin;
-          });
+      UserCredential u = value;
+      User? user = u.user;
+      // debugPrint("Cred Added on database $user");
+      return true;
+    }).onError((error, stackTrace) {
+      debugPrint(
+          "Error Occurred While Account Creation Email:$email\nError:$error");
+      throw UnableToLogin;
+    });
   }
 
   Future<bool> loginUser(String email, String pass) async {
@@ -70,9 +70,11 @@ class UsersProfileFireStore {
     });
   }
 
-  static Stream<UserProfileModel?> getCurrentUserProfile(String currentUserUID) {
+  static Stream<UserProfileModel?> getCurrentUserProfile(
+      String currentUserUID) {
     final firestoreStream = storeRef.doc(currentUserUID).snapshots();
-    return firestoreStream.map((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    return firestoreStream
+        .map((DocumentSnapshot<Map<String, dynamic>> snapshot) {
       if (snapshot.exists) {
         final Map<String, dynamic> data = snapshot.data()!;
         return UserProfileModel.fromJson(data);
@@ -82,5 +84,4 @@ class UsersProfileFireStore {
       }
     });
   }
-
 }

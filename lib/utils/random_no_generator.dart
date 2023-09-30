@@ -6,7 +6,8 @@ class GenerateRandom {
     return min + random.nextDouble() * (max - min);
   }
 
-  static List<double> getRandomListDouble(double min, double max, int itemCount) {
+  static List<double> getRandomListDouble(
+      double min, double max, int itemCount) {
     List<double> random = [];
 
     for (int i = 0; i < itemCount; ++i) {

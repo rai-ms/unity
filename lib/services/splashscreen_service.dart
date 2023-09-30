@@ -10,13 +10,11 @@ class SplashScreenServices {
       if (!context.mounted) return;
       Navigator.pushNamedAndRemoveUntil(
           context, RouteName.homeView, (route) => false);
-    }
-    else{
+    } else {
       await Future.delayed(const Duration(seconds: 3));
       if (!context.mounted) return;
       Navigator.pushNamedAndRemoveUntil(
           context, RouteName.introView, (route) => false);
     }
   }
-
 }

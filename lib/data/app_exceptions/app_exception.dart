@@ -41,6 +41,7 @@ class InvalidUrl extends AppException {
     AppException(message, AppStrings.invalidUrl);
   }
 }
+
 class UnauthorizedAccessException extends AppException {
   UnauthorizedAccessException([String? message]) {
     AppException(message, AppStrings.invalidUser);

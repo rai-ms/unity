@@ -57,6 +57,9 @@ class SignUpViewModel extends ChangeNotifier {
   }
 
   createAccount(BuildContext context) async {
+
+    setLoading(true);
+
     String emailUser = emailCont.text.toString().trim();
     String passwordUser = passCont.text.toString().trim();
     String nameUser = nameCont.text.toString().trim();
@@ -66,51 +69,57 @@ class SignUpViewModel extends ChangeNotifier {
     if (formKey.currentState!.validate() && confPassUser == passwordUser) {
       UsersProfileFireStore unityFireStoreUserProfile = UsersProfileFireStore();
 
-      await unityFireStoreUserProfile.createUserAccount(emailUser, passwordUser).then((res) async
-          {
-             if (res is! UnableToLogin) {
-                // Account creation is now done, now to register user need to login with user credential, then fetch uid for reg
-                // debugPrint("Account Creation done now login");
-                /// No need to login after the creation of account user already login
-                // bool login = await unityFireStoreUserProfile.loginUser(emailUser, passwordUser);
-                String uid = _auth.currentUser!.uid;
-                DateTime now = DateTime.now();
-                String date = DateTime(now.year, now.month, now.day)
-                    .toString()
-                    .replaceAll("00:00:00.000", "");
-                // User added/registered on this date
-                // debugPrint(date);
-                UserProfileModel userProfileModel = UserProfileModel(
-                    pass: passCont.text.toString().trim(),
-                    email: emailCont.text.toString().trim(),
-                    joinDate: date,
-                    image: _imgUrl,
-                    name: nameCont.text.toString().trim(),
-                    uid: uid);
-                unityFireStoreUserProfile.registerUser(userProfileModel).then((value) {
-                  // debugPrint("Registration Success");
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, RouteName.homeView, (route) => false);
-                }).onError((error, stackTrace) {
-                  debugPrint("Error in registration in View Model \nError:$error");
-                });
-              } 
-              else 
-              {
-                debugPrint("Error in createUserAccount in View Model $res");
-              }
-          })
-          .onError((error, stackTrace) {});
+      await unityFireStoreUserProfile
+          .createUserAccount(emailUser, passwordUser)
+          .then((res) async {
+        if (res is! UnableToLogin) {
+          // Account creation is now done, now to register user need to login with user credential, then fetch uid for reg
+          // debugPrint("Account Creation done now login");
+          /// No need to login after the creation of account user already login
+          // bool login = await unityFireStoreUserProfile.loginUser(emailUser, passwordUser);
+          // Now we have UID, so we can upload image on db
+          await uploadImage();
+          String uid = _auth.currentUser!.uid;
+          DateTime now = DateTime.now();
+          String date = DateTime(now.year, now.month, now.day)
+              .toString()
+              .replaceAll("00:00:00.000", "");
+          // User added/registered on this date
+          // debugPrint(date);
+          UserProfileModel userProfileModel = UserProfileModel(
+              pass: passCont.text.toString().trim(),
+              email: emailCont.text.toString().trim(),
+              joinDate: date,
+              image: _imgUrl,
+              name: nameCont.text.toString().trim(),
+              uid: uid);
+          unityFireStoreUserProfile
+              .registerUser(userProfileModel)
+              .then((value) {
+            // debugPrint("Registration Success");
+            setLoading(false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, RouteName.homeView, (route) => false);
+          }).onError((error, stackTrace) {
+            debugPrint("Error in registration in View Model \nError:$error");
+            setLoading(false);
+          });
+        } else {
+          debugPrint("Error in createUserAccount in View Model $res");
+          setLoading(false);
+        }
+      }).onError((error, stackTrace) {});
     } else if (passCont.text.toString().trim() !=
         confPassCont.text.toString().trim()) {
+      setLoading(false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Password and Confirm Password is not same"),
       ));
-    } 
-    else 
-    {
+    } else {
+      setLoading(false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Account Creation Failed, fill each and every thing correctly"),
+        content: Text(
+            "Account Creation Failed, fill each and every thing correctly"),
       ));
     }
   }
@@ -119,7 +128,7 @@ class SignUpViewModel extends ChangeNotifier {
   File? pickedImage;
   String _imgUrl =
       "https://i.pinimg.com/750x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg";
-
+  String get imgurl => _imgUrl;
   fetchImage() async {
     try {
       XFile? pickImage = await ImagePicker().pickImage(
@@ -138,10 +147,15 @@ class SignUpViewModel extends ChangeNotifier {
     PermissionStatus status = await Permission.camera.request();
     // Check the permission status
     if (status.isGranted) {
-      fetchImage();
-      uploadImage();
+      debugPrint("Going to fetch Image");
+      await fetchImage();
     } else {
-      openAppSettings();
+      debugPrint("Going to fetch Image in else");
+      await fetchImage();
+      debugPrint("Image Fetched now going to upload in else");
+      // await uploadImage();
+      debugPrint("Image Uploaded $_imgUrl in else");
+      // openAppSettings();
     }
   }
 
@@ -149,7 +163,10 @@ class SignUpViewModel extends ChangeNotifier {
     if (!isPicked) {
       return debugPrint("Image not Picked");
     } else {
-      await FirebaseImageUpload().uploadProfileImageFile(pickedImage).then((value) {
+      await FirebaseImageUpload()
+          .uploadProfileImageFile(pickedImage)
+          .then((value) {
+        debugPrint("Image uploaded on db usrl: $value");
         _imgUrl = value;
       }).onError((error, stackTrace) {
         debugPrint("Error during Uploading and getting the url \nError:$error");

@@ -9,7 +9,8 @@ import '../../view/splash_view/splash_view.dart';
 
 class NavigateRoute {
   static Route<dynamic> onGenerate(RouteSettings settings) {
-    switch (settings.name) {
+    switch (settings.name)
+    {
       case RouteName.homeView:
         return MaterialPageRoute(builder: (context) => const HomeView());
       case RouteName.splashscreen:
@@ -22,7 +23,8 @@ class NavigateRoute {
         return MaterialPageRoute(builder: (context) => const SignUpView());
       case RouteName.chatView:
         Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(builder: (context) => ChatView(reciever: r["user"]));
+        return MaterialPageRoute(
+            builder: (context) => ChatView(receiverData: r["user"]));
       default:
         return MaterialPageRoute(
             builder: (context) => const Scaffold(
