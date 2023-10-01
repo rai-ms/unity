@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unity/data/app_exceptions/app_exception.dart';
+import 'package:unity/utils/app_helper/app_strings.dart';
 import '../../model/firebase/user_profile_model.dart';
-import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
+import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 import '../../utils/app_helper/firebase_database/storage_firebase/firebase_storage_image_upload.dart';
 import '../../utils/routes/route_name.dart';
 import '../../utils/utils.dart';
@@ -25,12 +26,12 @@ class SignUpViewModel extends ChangeNotifier {
 
   bool obsText = false;
 
-  signUp() {
-    String email = emailCont.text.toString().trim();
-    String pass = passCont.text.toString().trim();
-    String name = nameCont.text.toString().trim();
-    String image = "";
-  }
+  // signUp() {
+  //   String email = emailCont.text.toString().trim();
+  //   String pass = passCont.text.toString().trim();
+  //   String name = nameCont.text.toString().trim();
+  //   String image = "";
+  // }
 
   passShowHide() {
     obsText = !obsText;
@@ -83,15 +84,15 @@ class SignUpViewModel extends ChangeNotifier {
           DateTime now = DateTime.now();
           String date = DateTime(now.year, now.month, now.day)
               .toString()
-              .replaceAll("00:00:00.000", "");
+              .replaceAll(AppStrings.oo, "");
           // User added/registered on this date
           // debugPrint(date);
           UserProfileModel userProfileModel = UserProfileModel(
-              pass: passCont.text.toString().trim(),
-              email: emailCont.text.toString().trim(),
+              pass: passwordUser,
+              email: emailUser,
               joinDate: date,
               image: _imgUrl,
-              name: nameCont.text.toString().trim(),
+              name: nameUser,
               uid: uid);
           unityFireStoreUserProfile
               .registerUser(userProfileModel)
@@ -101,11 +102,11 @@ class SignUpViewModel extends ChangeNotifier {
             Navigator.pushNamedAndRemoveUntil(
                 context, RouteName.homeView, (route) => false);
           }).onError((error, stackTrace) {
-            debugPrint("Error in registration in View Model \nError:$error");
+            //debugPrint("Error in registration in View Model \nError:$error");
             setLoading(false);
           });
         } else {
-          debugPrint("Error in createUserAccount in View Model $res");
+          //debugPrint("Error in createUserAccount in View Model $res");
           setLoading(false);
         }
       }).onError((error, stackTrace) {});
@@ -113,13 +114,12 @@ class SignUpViewModel extends ChangeNotifier {
         confPassCont.text.toString().trim()) {
       setLoading(false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Password and Confirm Password is not same"),
+        content: Text(AppStrings.passwordAndConfirm),
       ));
     } else {
       setLoading(false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-            "Account Creation Failed, fill each and every thing correctly"),
+        content: Text(AppStrings.accountCreation),
       ));
     }
   }
@@ -157,6 +157,7 @@ class SignUpViewModel extends ChangeNotifier {
       debugPrint("Image Uploaded $_imgUrl in else");
       // openAppSettings();
     }
+    notifyListeners();
   }
 
   Future<void> uploadImage() async {

@@ -6,17 +6,32 @@ class MessageModel {
   String receiverUID;
 
   /// [isForwarded] == 1 ? It marked as forwarded
-  /// [isForwarded] == 0 ? It marked as normal message
+  /// [isForwarded] == 0 ? It marked as a normal message
   int isForwarded;
 
   /// if [visibleNo] == 0? message won't be visible to anyone,
-  /// if [visibleNo] == 1? message will only be visible to receiver
-  /// if [visibleNo] == 2? message will only be visible to sender
+  /// if [visibleNo] == 1? message will only be visible to the receiver
+  /// if [visibleNo] == 2? message will only be visible to the sender
   /// if [visibleNo] == 3? message will be visible to everyone
   int visibleNo;
   String chatID;
-  String status;
-  String deliveryStatus;
+
+  /// Message status:
+  /// 0 - Sent
+  /// 1 - Delivered
+  /// 2 - Read
+  int status;
+
+  /// Timestamps:
+  /// When the message was sent.
+  String sentTime;
+
+  /// When the message was delivered.
+  String? deliveredTime;
+
+  /// When the message was read.
+  String? readTime;
+
   int star;
 
   /// This is the model of every message
@@ -31,22 +46,27 @@ class MessageModel {
     this.star = 0,
     required this.chatID,
     required this.status,
-    this.deliveryStatus = "0",
+    required this.sentTime,
+    this.deliveredTime,
+    this.readTime,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-        message: json['message'],
-        img: json['img'],
-        senderUID: json['senderUID'],
-        time: json['time'],
-        receiverUID: json['receiverUID'],
-        isForwarded: json['isForwarded'] ?? 0,
-        visibleNo: json['visibleNo'] ?? 3,
-        chatID: json['chatID'],
-        status: json['status'],
-        deliveryStatus: json['deliveryStatus'],
-        star: json['star'] ?? 0);
+      message: json['message'],
+      img: json['img'],
+      senderUID: json['senderUID'],
+      time: json['time'],
+      receiverUID: json['receiverUID'],
+      isForwarded: json['isForwarded'] ?? 0,
+      visibleNo: json['visibleNo'] ?? 3,
+      chatID: json['chatID'],
+      status: json['status'] ?? 0, // Default to Sent
+      sentTime: json['sentTime'],
+      deliveredTime: json['deliveredTime'],
+      readTime: json['readTime'],
+      star: json['star'] ?? 0,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -60,8 +80,10 @@ class MessageModel {
       'visibleNo': visibleNo,
       'chatID': chatID,
       'status': status,
-      'deliveryStatus': deliveryStatus,
-      'star': star
+      'star': star,
+      'sentTime': sentTime,
+      'deliveredTime': deliveredTime,
+      'readTime': readTime,
     };
   }
 }

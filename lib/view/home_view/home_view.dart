@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
@@ -17,7 +16,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     UnknownPageService.checkAuthHomePage(context);
@@ -33,12 +31,14 @@ class _HomeViewState extends State<HomeView> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Row(
+          title: Row(
             children: [
-              Text("Unity"),
-              // Consumer<HomeViewModel>(builder: (context, provider, child) {
-              //   return Text("User is:${provider.appLoginUser!.name ?? ""}");
-              // }),
+              Consumer<HomeViewModel>(builder: (context, provider, child) {
+                if(provider.appLoginUser == null){
+                  return const SizedBox();
+                }
+                return Text("User is:${provider.appLoginUser!.name.toString()}");
+              }),
             ],
           ),
           actions: [
@@ -88,6 +88,7 @@ class _HomeViewState extends State<HomeView> {
                                             arguments: {"user": users[index]});
                                       },
                                       title: Text(users[index].name),
+                                      // trailing: Text(provider.countMessage.toString()),
                                       leading: InkWell(
                                         onTap: (){
                                           showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users[index],)));

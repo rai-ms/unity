@@ -5,4 +5,5 @@ class RouteName {
   static const String introView = "/introView";
   static const String signupView = "/signupView";
   static const String chatView = "/chatView";
+  static const String userProfileView = "/userProfileView";
 }

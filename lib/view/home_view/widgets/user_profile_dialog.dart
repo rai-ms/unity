@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
@@ -18,17 +17,20 @@ class UserProfileDialog extends StatelessWidget {
         maxHeight: 405
       ),
       child: Column(
-        children: [
+        children:
+        [
           Stack(
             children: [
-              SizedBox(
-                  height: 350,
-                  child: CachedNetworkImage(imageUrl: user.image, fit: BoxFit.fill,)),
+              Center(
+                child: SizedBox(
+                    height: 350,
+                    child: CachedNetworkImage(imageUrl: user.image, fit: BoxFit.fill,)),
+              ),
               Align(
                 alignment: Alignment.topLeft,
                 child: Container(
                   height: 60,
-                  padding: EdgeInsets.only(left: 20),
+                  padding: const EdgeInsets.only(left: 20),
                   decoration: const BoxDecoration(
                       color: AppColors.fadeBlack
                   ),

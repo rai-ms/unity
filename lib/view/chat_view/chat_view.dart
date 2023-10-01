@@ -6,13 +6,14 @@ import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/message_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
+import 'package:unity/view/chat_view/widgets/chat_info_dialog.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/app_strings.dart';
 
 class ChatView extends StatefulWidget {
-  ChatView({super.key, required this.receiverData});
-  UserProfileModel receiverData;
+  const ChatView({super.key, required this.receiverData});
+  final UserProfileModel receiverData;
   @override
   State<ChatView> createState() => _ChatViewState();
 }
@@ -57,110 +58,117 @@ class _ChatViewState extends State<ChatView> {
           children: [
             Expanded(
               child:
-                  Consumer<ChatViewModel>(builder: (context, provider, child) {
-                return StreamBuilder<List<MessageModel>>(
+                Consumer<ChatViewModel>(builder: (context, provider, child)
+                  {
+                    return StreamBuilder<List<MessageModel>>(
                     stream: provider.getAllMessage(widget.receiverData.uid),
-                    builder:
-                        (context, AsyncSnapshot<List<MessageModel>> snapshot) {
+                    builder: (context, AsyncSnapshot<List<MessageModel>> snapshot)
+                    {
                       List<MessageModel>? messages = snapshot.data;
-                      if (!snapshot.hasData ||
-                          snapshot.connectionState == ConnectionState.waiting) {
+                      if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting)
+                      {
                         return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
+                      }
+                      else if (snapshot.hasError)
+                      {
                         return const Center(
                           child: Text(AppStrings.error),
                         );
-                      } else {
+                      }
+                      else
+                      {
                         return ListView.builder(
-                          itemBuilder: (context, index) {
-                            bool isSender = messages[index].senderUID ==
-                                _auth.currentUser!.uid;
+                          itemBuilder: (context, index)
+                          {
+                            bool isSender = messages[index].senderUID == _auth.currentUser!.uid;
                             if (messages[index].visibleNo != 0) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 200,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: isSender
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: isSender
-                                            ? CrossAxisAlignment.end
-                                            : CrossAxisAlignment.start,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              // debugPrint("DeleteMessage");
-                                              // provider.deleteMessage(
-                                              //     messages[index], 0);
-                                            },
-                                            onDoubleTap: () {},
-                                            child: Card(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                constraints:
-                                                    const BoxConstraints(
-                                                        maxWidth: 270),
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      colors: !isSender
-                                                          ? [
-                                                              AppColors
-                                                                  .blueSplashScreen,
-                                                              AppColors
-                                                                  .blueAccent
-                                                            ]
-                                                          : [
-                                                              AppColors
-                                                                  .blueAccent,
-                                                              AppColors
-                                                                  .blueSplashScreen
-                                                            ],
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Column(
-                                                  crossAxisAlignment: isSender
-                                                      ? CrossAxisAlignment.end
-                                                      : CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    Text(
-                                                      messages[index].message,
-                                                      style: AppStyle.chatStyle,
-                                                    ),
-                                                    if (isSender)
-                                                      Icon(
-                                                        messages[index]
-                                                                    .status ==
-                                                                "u"
-                                                            ? Icons
-                                                                .check_circle_outline
-                                                            : Icons
-                                                                .check_circle,
-                                                        color: AppColors.yellow,
-                                                        size: 20,
-                                                      )
-                                                  ],
+                              return Dismissible(
+                                onDismissed: (DismissDirection direction){
+                                },
+                                key: ValueKey<MessageModel>(messages[index]),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 200,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: isSender
+                                          ? MainAxisAlignment.end
+                                          : MainAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                // debugPrint("DeleteMessage");
+                                                // provider.deleteMessage(
+                                                //     messages[index], 0);
+                                                showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
+                                                
+                                              },
+                                              onDoubleTap: () {},
+                                              child: Card(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          maxWidth: 270),
+                                                  decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        colors: !isSender
+                                                            ? [
+                                                                AppColors
+                                                                    .blueSplashScreen,
+                                                                AppColors
+                                                                    .blueAccent
+                                                              ]
+                                                            : [
+                                                                AppColors
+                                                                    .blueAccent,
+                                                                AppColors
+                                                                    .blueSplashScreen
+                                                              ],
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Column(
+                                                    crossAxisAlignment: isSender
+                                                        ? CrossAxisAlignment.end
+                                                        : CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        messages[index].message,
+                                                        style: AppStyle.chatStyle,
+                                                      ),
+                                                      if (isSender)
+                                                        Icon(
+                                                          messages[index].status == 0
+                                                              ? Icons
+                                                                  .check
+                                                              : Icons.done_all,
+                                                          color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
+                                                          size: 20,
+                                                        )
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Text(
-                                            messages[index]
-                                                .time
-                                                .substring(11, 16),
-                                            style: AppStyle.blackNormal15,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Text(
+                                              messages[index]
+                                                  .time
+                                                  .substring(11, 16),
+                                              style: AppStyle.blackNormal15,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

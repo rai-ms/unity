@@ -135,7 +135,7 @@ class _SignUpViewState extends State<SignUpView> {
                       obscuringCharacter: "*",
                       obscureText: provider.obsText,
                       decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.password, color:  AppColors.blueSplashScreen,),
+                          prefixIcon: const Icon(Icons.lock_open, color:  AppColors.blueSplashScreen,),
                           suffixIcon: InkWell(
                               onTap: () {
                                 provider.passShowHide();
@@ -167,7 +167,7 @@ class _SignUpViewState extends State<SignUpView> {
                       obscuringCharacter: "*",
                       obscureText: provider.obsText,
                       decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.password, color:  AppColors.blueSplashScreen,),
+                          prefixIcon: const Icon(Icons.lock_open, color:  AppColors.blueSplashScreen,),
                           suffixIcon: InkWell(
                               onTap: () {
                                 provider.passShowHide();

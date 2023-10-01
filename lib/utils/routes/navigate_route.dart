@@ -5,6 +5,7 @@ import '../../view/chat_view/chat_view.dart';
 import '../../view/home_view/home_view.dart';
 import '../../view/intro_view/intro_view.dart';
 import '../../view/loginView/login_view.dart';
+import '../../view/personal_profile_view/user_profile_view.dart';
 import '../../view/splash_view/splash_view.dart';
 
 class NavigateRoute {
@@ -19,6 +20,10 @@ class NavigateRoute {
         return MaterialPageRoute(builder: (context) => const LoginView());
       case RouteName.introView:
         return MaterialPageRoute(builder: (context) => const IntroView());
+      case RouteName.userProfileView:
+        Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => UserProfileView(user: r["user"]));
       case RouteName.signupView:
         return MaterialPageRoute(builder: (context) => const SignUpView());
       case RouteName.chatView:

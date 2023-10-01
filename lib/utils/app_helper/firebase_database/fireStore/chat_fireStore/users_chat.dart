@@ -45,20 +45,18 @@ class UsersChat {
     });
   }
 
-  static Future<void> updateMessageStatus(
-      String receiver, String sender, String newStatus, String chatID) async {
-    final chatRoomId =
-        getChatRoomId(sender, receiver); // Extract chatRoomId from chatID
+  static Future<void> updateMessageStatus(MessageModel message) async {
+    final chatRoomId = getChatRoomId(message.senderUID, message.receiverUID); // Extract chatRoomId from chatID
     // debugPrint("ChatRoomId is $chatRoomId");
     final messageCollection = storeRef.doc(chatRoomId).collection("messages");
-    final messageDoc = await messageCollection.doc(chatID).get();
+    final messageDoc = await messageCollection.doc(message.chatID).get();
     // debugPrint("Message is going to update");
     if (messageDoc.exists) {
       // Update the message's status field
       // debugPrint("Doc exist");
       await messageCollection
-          .doc(chatID)
-          .update({"status": newStatus}).then((value) {
+          .doc(message.chatID)
+          .update({ "status": message.status, "readTime": message.readTime, }).then((value) async {
         // debugPrint("Message Updated");
       }).onError((error, stackTrace) {
         // debugPrint("Message Updation failed");

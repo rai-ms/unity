@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../model/firebase/message_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
-import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_firestore.dart';
+import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_fireStore.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,21 +13,32 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   int countUnseenMessages = 0;
+  List<int> countMessage = [];
 
   getAllMessage(String receiver) {
     countUnseenMessages = 0;
     String currentUser = _auth.currentUser!.uid.toString().trim();
     String now = DateTime.now().toString();
-    Stream<List<MessageModel>> chats =
-        UsersChat.getAllMessage(currentUser, receiver).map((messages) {
-      return messages.map((message) {
+    Stream<List<MessageModel>> chats = UsersChat.getAllMessage(currentUser, receiver).map((messages)
+    {
+      return messages.map((message)
+      {
         if (message.senderUID != currentUser) {
-          if (message.deliveryStatus == "0") {
-            message.deliveryStatus = now;
-            countUnseenMessages++;
-          } else if (message.status == "u") {
+          if (message.status == 0) {
+            message.deliveredTime = now;
+            message.status = 1;
             countUnseenMessages++;
           }
+          else if (message.status == 1) {
+            countUnseenMessages++;
+          }
+          countMessage.add(countUnseenMessages);
+          UsersChat.updateMessageStatus(message).then((value){
+            debugPrint("Updation on database is success");
+          }).onError((error, stackTrace){
+            debugPrint("Updation on database is failed");
+
+          });
         }
         return message;
       }).toList();
@@ -42,7 +53,6 @@ class HomeViewModel extends ChangeNotifier {
 // UserProfileModel
   @override
   void dispose() {
-    // TODO: implement dispose
     isLogin = false;
     super.dispose();
   }
@@ -72,4 +82,13 @@ class HomeViewModel extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  // Future<UserProfileModel?> getCurrentUsers() async {
+  //   UsersProfileFireStore.getCurrentUserProfile(_auth.currentUser!.uid).map((user){
+  //    return  _appLoginUser = user;
+  //   });
+  //     // Notify listeners (if this method is part of a ChangeNotifier).
+  //     notifyListeners();
+  //     return null;
+  // }
 }

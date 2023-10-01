@@ -22,7 +22,10 @@ class ChatViewModel extends ChangeNotifier {
         time: time,
         receiverUID: receiver,
         chatID: chatID,
-        status: "u",
+        readTime: "u",
+        status: 0,
+        sentTime: time,
+        visibleNo: 3,
       ));
     }
   }
@@ -36,11 +39,11 @@ class ChatViewModel extends ChangeNotifier {
       // debugPrint(messages.toString());
       return messages.map((message) {
         // debugPrint(message.message.toString());
-        if (message.senderUID != currentUser && message.status == "u") {
-          message.status = now;
+        if (message.senderUID != currentUser && message.status < 2) {
+          message.readTime = now.toString();
+          message.status = 2;
           // debugPrint(now.toString() + message.chatID);
-          UsersChat.updateMessageStatus(
-                  message.senderUID, message.receiverUID, now, message.chatID)
+          UsersChat.updateMessageStatus(message)
               .then((value) {})
               .onError((error, stackTrace) {});
         }
