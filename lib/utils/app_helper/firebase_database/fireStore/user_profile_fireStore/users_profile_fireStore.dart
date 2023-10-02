@@ -84,4 +84,9 @@ class UsersProfileFireStore {
       }
     });
   }
+
+  update(int status)
+  {
+
+  }
 }

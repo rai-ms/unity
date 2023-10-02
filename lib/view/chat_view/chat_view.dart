@@ -23,7 +23,8 @@ class _ChatViewState extends State<ChatView> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
+      providers:
+      [
         ChangeNotifierProvider(create: (context) => ChatViewModel()),
       ],
       child: Scaffold(
@@ -33,11 +34,7 @@ class _ChatViewState extends State<ChatView> {
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors
-                        .blueSplashScreen, // Set your desired border color here
-                    width: 2.0, // Set the border width
-                  ),
+                  border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
                 ),
                 child: ClipOval(
                   child: CachedNetworkImage(
@@ -52,178 +49,168 @@ class _ChatViewState extends State<ChatView> {
             ],
           ),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child:
-                Consumer<ChatViewModel>(builder: (context, provider, child)
-                  {
-                    return StreamBuilder<List<MessageModel>>(
-                    stream: provider.getAllMessage(widget.receiverData.uid),
-                    builder: (context, AsyncSnapshot<List<MessageModel>> snapshot)
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child:
+                  Consumer<ChatViewModel>(builder: (context, provider, child)
                     {
-                      List<MessageModel>? messages = snapshot.data;
-                      if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting)
+                      return StreamBuilder<List<MessageModel>>(
+                      stream: provider.getAllMessage(widget.receiverData.uid),
+                      builder: (context, AsyncSnapshot<List<MessageModel>> snapshot)
                       {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      else if (snapshot.hasError)
-                      {
-                        return const Center(
-                          child: Text(AppStrings.error),
-                        );
-                      }
-                      else
-                      {
-                        return ListView.builder(
-                          itemBuilder: (context, index)
-                          {
-                            bool isSender = messages[index].senderUID == _auth.currentUser!.uid;
-                            if (messages[index].visibleNo != 0) {
-                              return Dismissible(
-                                onDismissed: (DismissDirection direction){
-                                },
-                                key: ValueKey<MessageModel>(messages[index]),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    constraints: const BoxConstraints(
-                                      maxWidth: 200,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: isSender
-                                          ? MainAxisAlignment.end
-                                          : MainAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                // debugPrint("DeleteMessage");
-                                                // provider.deleteMessage(
-                                                //     messages[index], 0);
-                                                showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
-                                                
-                                              },
-                                              onDoubleTap: () {},
-                                              child: Card(
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 270),
-                                                  decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                        colors: !isSender
-                                                            ? [
-                                                                AppColors
-                                                                    .blueSplashScreen,
-                                                                AppColors
-                                                                    .blueAccent
-                                                              ]
-                                                            : [
-                                                                AppColors
-                                                                    .blueAccent,
-                                                                AppColors
-                                                                    .blueSplashScreen
-                                                              ],
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  child: Column(
-                                                    crossAxisAlignment: isSender
-                                                        ? CrossAxisAlignment.end
-                                                        : CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        messages[index].message,
-                                                        style: AppStyle.chatStyle,
-                                                      ),
-                                                      if (isSender)
-                                                        Icon(
-                                                          messages[index].status == 0
-                                                              ? Icons
-                                                                  .check
-                                                              : Icons.done_all,
-                                                          color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
-                                                          size: 20,
-                                                        )
-                                                    ],
+                        List<MessageModel>? messages = snapshot.data;
+                        if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting)
+                        {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        else if (snapshot.hasError)
+                        {
+                          return const Center(
+                            child: Text(AppStrings.error),
+                          );
+                        }
+                        else
+                        {
+                          return ListView.builder(
+                            itemBuilder: (context, index)
+                            {
+                              bool isSender = messages[index].senderUID == _auth.currentUser!.uid;
+                              bool isImage = messages[index].img != null && messages[index].img != "";
+                              String image = messages[index].img ?? "";
+                              if (messages[index].visibleNo != 0) {
+                                return Dismissible(
+                                  onDismissed: (DismissDirection direction){
+                                  },
+                                  key: ValueKey<MessageModel>(messages[index]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      constraints: const BoxConstraints(
+                                        maxWidth: 200,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: isSender
+                                            ? MainAxisAlignment.end
+                                            : MainAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  // debugPrint("DeleteMessage");
+                                                  // provider.deleteMessage(
+                                                  //     messages[index], 0);
+                                                  showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
+
+                                                },
+                                                onDoubleTap: () {},
+                                                child: Card(
+                                                  child: Container(
+                                                    padding:const EdgeInsets.all(10),
+                                                    constraints:const BoxConstraints(maxWidth: 270),
+                                                    decoration: BoxDecoration(gradient: LinearGradient(colors:
+                                                    !isSender?[ AppColors.blueSplashScreen, AppColors.blueAccent] : [AppColors.blueAccent, AppColors.blueSplashScreen],), borderRadius: BorderRadius.circular(10)),
+                                                    child: Column(
+                                                      crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                                      children: [
+                                                        if (isImage) Container(
+                                                            padding: const EdgeInsets.all(4),
+                                                            decoration: const BoxDecoration(
+                                                            color: AppColors.blueSplashScreen,
+                                                          ),
+                                                            child: CachedNetworkImage(imageUrl: image,),
+                                                          )
+                                                        else Text(
+                                                          messages[index].message,
+                                                          style: AppStyle.chatStyle,
+                                                        ),
+                                                        if (isSender) Icon(
+                                                            messages[index].status == 0
+                                                                ? Icons
+                                                                    .check
+                                                                : Icons.done_all,
+                                                            color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
+                                                            size: 20,
+                                                          )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            Text(
-                                              messages[index]
-                                                  .time
-                                                  .substring(11, 16),
-                                              style: AppStyle.blackNormal15,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                              Text(
+                                                messages[index] .time.substring(11, 16),
+                                                style: AppStyle.blackNormal15,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
-                          itemCount: messages!.length,
-                        );
-                      }
-                    });
-              }),
-            ),
-            Consumer<ChatViewModel>(builder: (context, provider, child) {
-              return Row(
-                children: [
-                  Expanded(
-                    flex: 7,
-                    child: TextFormField(
-                      controller: provider.messCont,
-                      focusNode: provider.messFocus,
-                      onFieldSubmitted: (_) {
-                        provider.sendMessage(widget.receiverData.uid);
+                                );
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                            itemCount: messages!.length,
+                          );
+                        }
+                      });
+                }),
+              ),
+              Consumer<ChatViewModel>(builder: (context, provider, child) {
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 7,
+                      child: TextFormField(
+                        controller: provider.messCont,
+                        focusNode: provider.messFocus,
+                        onFieldSubmitted: (_) {
+                          provider.sendMessage(widget.receiverData.uid);
+                        },
+                        decoration: InputDecoration(
+                            suffixIcon: InkWell(
+                                onTap: () async {
+                                  await provider.pickAndSendImage(widget.receiverData.uid);
+                                },
+                                child: const Icon(Icons.image, color: AppColors.blueSplashScreen,)),
+                            border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                borderSide:
+                                    BorderSide(width: 2, color: AppColors.black)),
+                            hintText: AppStrings.enterMessage,
+                            constraints: const BoxConstraints(
+                              maxWidth: 400,
+                            ),
+                            hoverColor: AppColors.blueAccent),
+                      ),
+                    ),
+                    sizedBox(wid: 5),
+                    InkWell(
+                      onTap: () {
+                        provider.sendMessage(widget.receiverData.uid, isImage: false, imageUrl: "");
                       },
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide:
-                                  BorderSide(width: 2, color: AppColors.black)),
-                          hintText: AppStrings.enterMessage,
-                          constraints: BoxConstraints(
-                            maxWidth: 400,
-                          ),
-                          hoverColor: AppColors.blueAccent),
+                      child: const CircleAvatar(
+                        radius: 35,
+                        child: Center(
+                            child: Icon(
+                          Icons.send,
+                          color: AppColors.blueSplashScreen,
+                        )),
+                      ),
                     ),
-                  ),
-                  sizedBox(wid: 5),
-                  InkWell(
-                    onTap: () {
-                      provider.sendMessage(widget.receiverData.uid);
-                    },
-                    child: const CircleAvatar(
-                      radius: 35,
-                      child: Center(
-                          child: Icon(
-                        Icons.send,
-                        color: AppColors.blueSplashScreen,
-                      )),
-                    ),
-                  ),
-                ],
-              );
-            })
-          ],
+                  ],
+                );
+              })
+            ],
+          ),
         ),
       ),
     );

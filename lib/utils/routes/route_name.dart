@@ -6,4 +6,5 @@ class RouteName {
   static const String signupView = "/signupView";
   static const String chatView = "/chatView";
   static const String userProfileView = "/userProfileView";
+  static const String thirdUserInfoView = "/thirdUserInfoView";
 }

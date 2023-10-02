@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
+import 'package:unity/services/splashscreen_service.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/home_view/widgets/user_profile_dialog.dart';
@@ -19,7 +21,34 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     UnknownPageService.checkAuthHomePage(context);
+    SystemChannels.lifecycle.setMessageHandler((message) async
+    {
+      debugPrint(message);
+      if(message.toString().contains("pause")) {
+        // set here for last active time
+      }
+      else if(message.toString().contains('resume')){
+        // set here for Online
+      }
+      return Future.value(message);
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChannels.lifecycle.setMessageHandler((message) async
+    {
+      debugPrint(message);
+      if(message.toString().contains("pause")) {
+        // set here for last active time
+      }
+      else if(message.toString().contains('resume')){
+        // set here for Online
+      }
+      return Future.value(message);
+    });
+    super.dispose();
   }
 
   @override
@@ -51,6 +80,16 @@ class _HomeViewState extends State<HomeView> {
                 },
                 child: const Icon(Icons.logout_outlined),
               );
+            }),
+            Consumer<HomeViewModel>(builder: (context, provider, child) {
+              if(provider.appLoginUser == null){
+                return const SizedBox();
+              }
+              return InkWell(
+                  onTap: (){
+                    Navigator.pushNamed(context, RouteName.userProfileView, arguments: {'user':provider.appLoginUser});
+                  },
+                  child: const Icon(Icons.settings));
             }),
           ],
         ),

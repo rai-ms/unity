@@ -5,7 +5,8 @@ import 'package:unity/utils/routes/route_name.dart';
 class UnknownPageService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static checkAuthHomePage(BuildContext context) {
-    if (_auth.currentUser != null) {
+    if (_auth.currentUser != null)
+    {
       return;
     } else {
       Navigator.pushNamedAndRemoveUntil(

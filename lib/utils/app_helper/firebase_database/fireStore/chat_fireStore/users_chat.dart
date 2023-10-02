@@ -39,7 +39,9 @@ class UsersChat {
     messageCollection
         .doc(message.chatID)
         .set(message.toMap())
-        .then((value) {})
+        .then((value) {
+      debugPrint("message sent");
+    })
         .onError((error, stackTrace) {
       throw InvalidUrl(error.toString());
     });

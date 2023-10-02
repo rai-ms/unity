@@ -24,6 +24,7 @@ class UserProfileDialog extends StatelessWidget {
               Center(
                 child: SizedBox(
                     height: 350,
+                    width: 350,
                     child: CachedNetworkImage(imageUrl: user.image, fit: BoxFit.fill,)),
               ),
               Align(
@@ -67,6 +68,8 @@ class UserProfileDialog extends StatelessWidget {
                     InkWell(
                         onTap: ()
                         {
+                          // ThirdUserInfoView
+                          Navigator.pushNamedAndRemoveUntil(context, RouteName.thirdUserInfoView, arguments: {"user":user}, (route)=> route.isFirst);
 
                         },
                         child: const Icon(Icons.info_outline_rounded, color: AppColors.blueSplashScreen,)),

@@ -1,6 +1,7 @@
 class UserProfileModel {
   String name, email, pass, image, uid, joinDate;
-  List<String> blockedUID = []; // List of blocked user IDs
+  List<String> blockedUID; // List of blocked user IDs
+  bool onLineStatus; // Online status
 
   UserProfileModel({
     required this.uid,
@@ -10,13 +11,11 @@ class UserProfileModel {
     required this.pass,
     required this.joinDate,
     List<String>? blockedUID, // Optional parameter for initializing blockedUID
-  }) {
-    // Initialize blockedUID with an empty list if not provided
-    this.blockedUID = blockedUID ?? [];
-  }
+    bool? onLineStatus, // Optional parameter for initializing onLineStatus
+  })   : blockedUID = blockedUID ?? [], // Initialize blockedUID with an empty list if not provided
+        onLineStatus = onLineStatus ?? false; // Initialize onLineStatus with false if not provided
 
-  Map<String, dynamic> toMap()
-  {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "id": uid,
       "name": name,
@@ -25,6 +24,7 @@ class UserProfileModel {
       "joinDate": joinDate,
       "email": email,
       "blockedUID": blockedUID, // Include the blocked user IDs in the map
+      "onLineStatus": onLineStatus, // Include the online status in the map
     };
   }
 
@@ -39,6 +39,7 @@ class UserProfileModel {
       blockedUID: json['blockedUID'] != null
           ? List<String>.from(json['blockedUID']) // Convert JSON array to a List<String>
           : [], // Initialize with an empty list if not present
+      onLineStatus: json['onLineStatus'] ?? false, // Initialize with false if not present
     );
   }
 }

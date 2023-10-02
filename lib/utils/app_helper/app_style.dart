@@ -12,6 +12,14 @@ class AppStyle {
     );
   }
 
+  static TextStyle? get whiteBold30 {
+    return const TextStyle(
+      color: AppColors.white,
+      fontSize: 30,
+      fontWeight: FontWeight.w700,
+    );
+  }
+
   static TextStyle? get blackBold16 {
     return const TextStyle(
       color: AppColors.black,
@@ -36,9 +44,25 @@ class AppStyle {
     );
   }
 
+  static TextStyle? get blackBold34 {
+    return const TextStyle(
+      color: AppColors.black,
+      fontSize: 32,
+      fontWeight: FontWeight.w700,
+    );
+  }
+
   static TextStyle? get blackBold20 {
     return const TextStyle(
       color: AppColors.black,
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+    );
+  }
+
+  static TextStyle? get blueSplashBold20 {
+    return const TextStyle(
+      color: AppColors.blueSplashScreen,
       fontSize: 20,
       fontWeight: FontWeight.w700,
     );

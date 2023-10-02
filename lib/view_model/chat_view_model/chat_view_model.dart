@@ -1,23 +1,27 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:unity/model/firebase/message_model.dart';
-
 import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
+import '../../utils/app_helper/firebase_database/storage_firebase/firebase_storage_image_upload.dart';
 
 class ChatViewModel extends ChangeNotifier {
   TextEditingController messCont = TextEditingController();
   FocusNode messFocus = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  sendMessage(String receiver) {
+  sendMessage(String receiver, {bool isImage = false, String imageUrl = ""}) {
     String mess = messCont.text.toString().trim();
     messCont.clear();
     DateTime now = DateTime.now();
     String time = now.toString();
     String chatID = now.millisecondsSinceEpoch.toString();
-    if (mess.isNotEmpty) {
+    if (mess.isNotEmpty || isImage) {
       UsersChat.sendMessage(MessageModel(
-        message: mess,
+        message: !isImage?mess:"",
         senderUID: _auth.currentUser!.uid,
         time: time,
         receiverUID: receiver,
@@ -26,8 +30,85 @@ class ChatViewModel extends ChangeNotifier {
         status: 0,
         sentTime: time,
         visibleNo: 3,
+        img: isImage?imageUrl:""
       ));
     }
+  }
+
+  pickAndSendImage(String receiver) async
+  {
+    debugPrint("pick going to upload");
+    await requestPermission(receiver);
+
+  }
+
+  Future<void> requestPermission(String receiver) async {
+    PermissionStatus status = await Permission.camera.request();
+
+    // Check the permission status
+    if (status.isGranted) {
+      debugPrint("Permission Granted");
+      await fetchImage();
+      debugPrint("Image Fetched going to upload");
+      await uploadImage(receiver);
+      debugPrint("Image Uploaded");
+
+    } else {
+      debugPrint("Permission not granted in else");
+      debugPrint("Going to fetch image in else");
+      await fetchImage();
+      debugPrint("Image fetched going to upload in else");
+      await uploadImage(receiver);
+      debugPrint("Going to upload in else");
+      // openAppSettings();
+    }
+  }
+
+  uploadImage(String receiver) async {
+    if (!isPicked) return;
+    User user = _auth.currentUser!;
+    String timeId = DateTime.now().microsecondsSinceEpoch.toString();
+
+    String url = await FirebaseImageUpload.sendImageWithSenderAndReceiverChatIDAndTimeOnStorage(getChatID(receiver, user.uid.toString()), timeId, pickedImage);
+    sendMessage(receiver, isImage: true, imageUrl: url);
+    // await UsersChat.sendMessage(MessageModel(message: "", senderUID: user.uid, time: timeId, receiverUID: receiver, chatID: timeId, status: 0, sentTime: timeId, img: url)).then((value){
+    //   debugPrint("Success uploading image on database");
+    //
+    // }).onError((error, stackTrace){
+    //   debugPrint("Error while uploading image on database");
+    // });
+    isPicked = false;
+    pickedImage = null;
+  }
+
+  String getChatID(String r, String s)
+  {
+
+    List<String> l = [r,s];
+    l.sort();
+    debugPrint("returning chat id");
+    return l.join("_");
+
+  }
+
+  bool isUploaded = true;
+
+  bool isPicked = false;
+
+  File? pickedImage;
+  fetchImage() async
+  {
+    try {
+      XFile? pickImage = await ImagePicker().pickImage(
+          source: ImageSource.gallery, maxHeight: 200, maxWidth: 300);
+
+      if (pickImage == null) return;
+      final tmpImage = File(pickImage.path);
+      pickedImage = tmpImage;
+      isPicked = true;
+      debugPrint("image fetched $pickedImage");
+    } on Exception catch (_)
+    {}
   }
 
   getAllMessage(String receiver) {
