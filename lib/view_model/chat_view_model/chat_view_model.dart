@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unity/model/firebase/message_model.dart';
+import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
 import '../../utils/app_helper/firebase_database/storage_firebase/firebase_storage_image_upload.dart';
 
@@ -12,7 +13,7 @@ class ChatViewModel extends ChangeNotifier {
   TextEditingController messCont = TextEditingController();
   FocusNode messFocus = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  FirebaseAuth get auth => _auth;
   sendMessage(String receiver, {bool isImage = false, String imageUrl = ""}) {
     String mess = messCont.text.toString().trim();
     messCont.clear();
@@ -35,8 +36,7 @@ class ChatViewModel extends ChangeNotifier {
     }
   }
 
-  pickAndSendImage(String receiver) async
-  {
+  pickAndSendImage(String receiver) async {
     debugPrint("pick going to upload");
     await requestPermission(receiver);
 
@@ -81,8 +81,7 @@ class ChatViewModel extends ChangeNotifier {
     pickedImage = null;
   }
 
-  String getChatID(String r, String s)
-  {
+  String getChatID(String r, String s) {
 
     List<String> l = [r,s];
     l.sort();
@@ -96,8 +95,7 @@ class ChatViewModel extends ChangeNotifier {
   bool isPicked = false;
 
   File? pickedImage;
-  fetchImage() async
-  {
+  fetchImage() async {
     try {
       XFile? pickImage = await ImagePicker().pickImage(
           source: ImageSource.gallery, maxHeight: 200, maxWidth: 300);
@@ -111,7 +109,7 @@ class ChatViewModel extends ChangeNotifier {
     {}
   }
 
-  getAllMessage(String receiver) {
+  Stream<List<MessageModel>> getAllMessage(String receiver) {
     String currentUser = _auth.currentUser!.uid;
     String now = DateTime.now().toString();
 
@@ -123,6 +121,7 @@ class ChatViewModel extends ChangeNotifier {
         if (message.senderUID != currentUser && message.status < 2) {
           message.readTime = now.toString();
           message.status = 2;
+          message.deliveredTime = now.toString();
           // debugPrint(now.toString() + message.chatID);
           UsersChat.updateMessageStatus(message)
               .then((value) {})
@@ -140,5 +139,9 @@ class ChatViewModel extends ChangeNotifier {
             messageModel.chatID, code)
         .then((value) {})
         .onError((error, stackTrace) {});
+  }
+
+  Future<bool> getStatus(String uID) async {
+    return await UsersProfileFireStore.getStatus(uID);
   }
 }

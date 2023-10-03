@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:unity/res/components/custom_toast.dart';
@@ -27,19 +29,37 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  login(context) {
+  login(BuildContext context) async {
     setLoading(true);
-    _auth
-        .signInWithEmailAndPassword(
-            email: mailCont.text.toString().trim(),
-            password: passCont.text.toString().trim())
-        .then((value) {
+
+    try {
+      final authResult = await _auth.signInWithEmailAndPassword(
+        email: mailCont.text.toString().trim(),
+        password: passCont.text.toString().trim(),
+      );
+
       setLoading(false);
-      Navigator.pushNamedAndRemoveUntil(
-          context, RouteName.homeView, (route) => false);
-    }).onError((error, stackTrace) {
+      if(context.mounted)
+      {
+        Navigator.pushNamedAndRemoveUntil(
+          context, RouteName.homeView, (route) => false,
+        );
+      }
+    } catch (error) {
       setLoading(false);
-      CustomToast(context: context, message: "Wrong Credentials");
-    });
+      if (error is SocketException) {
+        // Handle SocketException (when data is off)
+        if(context.mounted)
+        {
+          CustomToast(context: context, message: "Data is Off");
+        }
+      } else {
+        if(context.mounted)
+        {
+          CustomToast(context: context, message: "Wrong Credentials");
+        }
+      }
+    }
   }
+
 }

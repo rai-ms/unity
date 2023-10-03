@@ -4,9 +4,8 @@ import 'package:unity/data/app_exceptions/app_exception.dart';
 import '../../../../../model/firebase/user_profile_model.dart';
 
 class UsersProfileFireStore {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final storeRef = FirebaseFirestore.instance.collection("users");
-
   /// This is done to create the account of the user, to get the UID
   Future<bool?> createUserAccount(String email, String pass) async {
     await _auth
@@ -68,8 +67,7 @@ class UsersProfileFireStore {
     });
   }
 
-  static Stream<UserProfileModel?> getCurrentUserProfile(
-      String currentUserUID) {
+  static Stream<UserProfileModel?> getCurrentUserProfile(String currentUserUID) {
     final fireStoreStream = storeRef.doc(currentUserUID).snapshots();
     return fireStoreStream.map((DocumentSnapshot<Map<String, dynamic>> snapshot) {
       if (snapshot.exists)
@@ -84,9 +82,24 @@ class UsersProfileFireStore {
       }
     });
   }
-
-  update(int status)
+  // Update user's online status to "online" when they log in
+  static updateStatus(bool status) async
   {
-
+    final currentUserUID = _auth.currentUser?.uid;
+    if (currentUserUID != null) {
+      final userDoc = FirebaseFirestore.instance.collection("users").doc(currentUserUID);
+      await userDoc.update({"onLineStatus": "$status"}).then((value){}).onError((error, stackTrace){});
+    }
   }
+
+  static Future<bool> getStatus(String uID) async {
+    final userDoc = FirebaseFirestore.instance.collection("users").doc(uID);
+    final snapshot = await userDoc.get();
+    final data = snapshot.data();
+    if (data != null && data.containsKey("onLineStatus")) {
+      return data["onLineStatus"] ?? false; // Return the online status or false if not present
+    }
+      return false; // Return false if the document doesn't exist or doesn't contain the field
+  }
+
 }

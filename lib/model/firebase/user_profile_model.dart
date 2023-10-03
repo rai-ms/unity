@@ -1,7 +1,11 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
+
 class UserProfileModel {
   String name, email, pass, image, uid, joinDate;
   List<String> blockedUID; // List of blocked user IDs
-  bool onLineStatus; // Online status
+  int onLineStatus; // Online status represented as an integer (0 or 1)
 
   UserProfileModel({
     required this.uid,
@@ -11,9 +15,9 @@ class UserProfileModel {
     required this.pass,
     required this.joinDate,
     List<String>? blockedUID, // Optional parameter for initializing blockedUID
-    bool? onLineStatus, // Optional parameter for initializing onLineStatus
+    int? onLineStatus, // Optional parameter for initializing onLineStatus
   })   : blockedUID = blockedUID ?? [], // Initialize blockedUID with an empty list if not provided
-        onLineStatus = onLineStatus ?? false; // Initialize onLineStatus with false if not provided
+        onLineStatus = onLineStatus ?? 0; // Initialize onLineStatus with 0 if not provided
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -24,12 +28,12 @@ class UserProfileModel {
       "joinDate": joinDate,
       "email": email,
       "blockedUID": blockedUID, // Include the blocked user IDs in the map
-      "onLineStatus": onLineStatus, // Include the online status in the map
+      "onLineStatus": onLineStatus, // Include the online status in the map as an integer
     };
   }
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    return UserProfileModel(
+    UserProfileModel userModel = UserProfileModel(
       uid: json['id'],
       name: json['name'],
       pass: json['pass'],
@@ -39,7 +43,9 @@ class UserProfileModel {
       blockedUID: json['blockedUID'] != null
           ? List<String>.from(json['blockedUID']) // Convert JSON array to a List<String>
           : [], // Initialize with an empty list if not present
-      onLineStatus: json['onLineStatus'] ?? false, // Initialize with false if not present
+      onLineStatus: json['onLineStatus'] == "true" ?1:0, // Initialize with 0 if not present
     );
+    debugPrint(userModel.toString());
+    return userModel;
   }
 }

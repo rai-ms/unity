@@ -19,7 +19,7 @@ class ChatView extends StatefulWidget {
 }
 
 class _ChatViewState extends State<ChatView> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -46,6 +46,15 @@ class _ChatViewState extends State<ChatView> {
               ),
               sizedBox(wid: 20),
               Text(widget.receiverData.name),
+              Consumer<ChatViewModel>(builder: (context, provider, child)
+              {
+                return FutureBuilder<bool>(future: provider.getStatus(widget.receiverData.uid), builder: (context,AsyncSnapshot<bool> isOnline){
+                  if(!isOnline.hasData || isOnline.connectionState == ConnectionState.waiting) return const SizedBox();
+                  bool st = isOnline.data ?? false;
+                  return Icon(Icons.circle, color: st? AppColors.green:AppColors.grey,);
+                },);
+              }),
+              Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
             ],
           ),
         ),
@@ -78,12 +87,14 @@ class _ChatViewState extends State<ChatView> {
                           return ListView.builder(
                             itemBuilder: (context, index)
                             {
-                              bool isSender = messages[index].senderUID == _auth.currentUser!.uid;
+                              bool isSender = messages[index].senderUID == provider.auth.currentUser!.uid;
                               bool isImage = messages[index].img != null && messages[index].img != "";
                               String image = messages[index].img ?? "";
                               if (messages[index].visibleNo != 0) {
                                 return Dismissible(
-                                  onDismissed: (DismissDirection direction){
+                                  onDismissed: (DismissDirection direction)
+                                  {
+
                                   },
                                   key: ValueKey<MessageModel>(messages[index]),
                                   child: Padding(

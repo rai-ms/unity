@@ -58,7 +58,7 @@ class UsersChat {
       // debugPrint("Doc exist");
       await messageCollection
           .doc(message.chatID)
-          .update({ "status": message.status, "readTime": message.readTime, }).then((value) async {
+          .update({ "status": message.status, "readTime": message.readTime, "deliveredTime" : message.deliveredTime}).then((value) async {
         // debugPrint("Message Updated");
       }).onError((error, stackTrace) {
         // debugPrint("Message Updation failed");

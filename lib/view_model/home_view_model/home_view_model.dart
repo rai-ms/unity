@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import '../../model/firebase/message_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
@@ -15,45 +16,57 @@ class HomeViewModel extends ChangeNotifier {
   int countUnseenMessages = 0;
   List<int> countMessage = [];
 
-  getAllMessage(String receiver) {
-    countUnseenMessages = 0;
-    String currentUser = _auth.currentUser!.uid.toString().trim();
+  Stream<List<MessageModel>> getAllMessage(String receiver) {
+    String currentUser = _auth.currentUser!.uid;
     String now = DateTime.now().toString();
-    Stream<List<MessageModel>> chats = UsersChat.getAllMessage(currentUser, receiver).map((messages)
-    {
-      return messages.map((message)
-      {
-        if (message.senderUID != currentUser) {
-          if (message.status == 0) {
-            message.deliveredTime = now;
-            message.status = 1;
-            countUnseenMessages++;
-          }
-          else if (message.status == 1) {
-            countUnseenMessages++;
-          }
-          countMessage.add(countUnseenMessages);
-          UsersChat.updateMessageStatus(message).then((value){
-            debugPrint("Updation on database is success");
-          }).onError((error, stackTrace){
-            debugPrint("Updation on database is failed");
 
+    Stream<List<MessageModel>> chats =
+    UsersChat.getAllMessage(currentUser, receiver).map((messages) {
+      // debugPrint(messages.toString());
+      return messages.map((message) {
+        // debugPrint(message.message.toString());
+        if (message.senderUID != currentUser && message.status < 2) {
+          message.deliveredTime = now;
+          message.status = 1;
+          // debugPrint(now.toString() + message.chatID);
+          UsersChat.updateMessageStatus(message)
+              .then((value) {
+            debugPrint("Message Updated:"+now.toString() + message.chatID);
+          })
+              .onError((error, stackTrace) {
+            debugPrint("Unable to Updated Message:" +now.toString() + message.chatID);
           });
         }
         return message;
       }).toList();
     });
+    // debugPrint(chats.toString());
     return chats;
   }
 
-  getAllUser() {
-    return UsersProfileFireStore.getAllUsers();
+  Stream<List<UserProfileModel>> getAllUser() {
+    Stream<List<UserProfileModel>> usersStream =  UsersProfileFireStore.getAllUsers();
+    return usersStream;
   }
+
 
 // UserProfileModel
   @override
   void dispose() {
     isLogin = false;
+    SystemChannels.lifecycle.setMessageHandler((message) async
+    {
+      debugPrint(message);
+      if(message.toString().contains("pause")) {
+        // set here for last active time
+        setUserStatus(false);
+      }
+      else if(message.toString().contains('resume')){
+        // set here for Online
+        setUserStatus(true);
+      }
+      return Future.value(message);
+    });
     super.dispose();
   }
 
@@ -83,12 +96,9 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  // Future<UserProfileModel?> getCurrentUsers() async {
-  //   UsersProfileFireStore.getCurrentUserProfile(_auth.currentUser!.uid).map((user){
-  //    return  _appLoginUser = user;
-  //   });
-  //     // Notify listeners (if this method is part of a ChangeNotifier).
-  //     notifyListeners();
-  //     return null;
-  // }
+  static setUserStatus(bool status)
+  {
+    UsersProfileFireStore.updateStatus(status);
+  }
+
 }

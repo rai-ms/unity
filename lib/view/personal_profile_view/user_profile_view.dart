@@ -22,7 +22,8 @@ class _UserProfileViewState extends State<UserProfileView> {
         backgroundColor: AppColors.blueSplashScreen,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+          children:
+          [
             Text(AppStrings.profile, style: AppStyle.whiteBold30,),
           ],
         ),
@@ -56,7 +57,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                     Text("Unity User", style: AppStyle.blackNormal20,),
                   ],
                 ),
-                trailing: Icon(Icons.edit, color: AppColors.blueSplashScreen,),
+                trailing: const Icon(Icons.edit, color: AppColors.blueSplashScreen,),
               ),
               ListTile(
                 leading:const Icon(Icons.email_outlined, color: AppColors.blueSplashScreen,),

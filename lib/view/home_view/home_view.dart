@@ -26,29 +26,15 @@ class _HomeViewState extends State<HomeView> {
       debugPrint(message);
       if(message.toString().contains("pause")) {
         // set here for last active time
+        HomeViewModel.setUserStatus(false);
       }
       else if(message.toString().contains('resume')){
         // set here for Online
+        HomeViewModel.setUserStatus(true);
       }
       return Future.value(message);
     });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    SystemChannels.lifecycle.setMessageHandler((message) async
-    {
-      debugPrint(message);
-      if(message.toString().contains("pause")) {
-        // set here for last active time
-      }
-      else if(message.toString().contains('resume')){
-        // set here for Online
-      }
-      return Future.value(message);
-    });
-    super.dispose();
   }
 
   @override
