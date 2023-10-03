@@ -19,6 +19,11 @@ class _UserProfileViewState extends State<UserProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: InkWell(
+            onTap: (){
+              Navigator.pop(context);
+            },
+            child: const Icon(Icons.arrow_back, color: AppColors.white,)),
         backgroundColor: AppColors.blueSplashScreen,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -46,7 +51,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                     Text(widget.user.name.toString() ?? "", style: AppStyle.blackBold24,),
                   ],
                 ),
-                trailing: Icon(Icons.edit, color: AppColors.blueSplashScreen,),
+                trailing: const Icon(Icons.edit, color: AppColors.blueSplashScreen,),
               ),
               ListTile(
                 leading:const Icon(Icons.info_outline_rounded, color: AppColors.blueSplashScreen,),

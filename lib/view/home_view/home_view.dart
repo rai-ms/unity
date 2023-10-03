@@ -25,11 +25,9 @@ class _HomeViewState extends State<HomeView> {
     {
       debugPrint(message);
       if(message.toString().contains("pause")) {
-        // set here for last active time
         HomeViewModel.setUserStatus(false);
       }
       else if(message.toString().contains('resume')){
-        // set here for Online
         HomeViewModel.setUserStatus(true);
       }
       return Future.value(message);
@@ -106,6 +104,9 @@ class _HomeViewState extends State<HomeView> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Consumer<HomeViewModel>(
                                       builder: (context, provider, child) {
+                                        if(users[index].uid == provider.appLoginUser!.uid){
+                                          return const SizedBox();
+                                        }
                                     return ListTile(
                                       onTap: () {
                                         Navigator.pushNamed(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/signup_view/signup_view.dart';
 import '../../view/chat_view/chat_view.dart';
+import '../../view/chat_view/widgets/forward_message.dart';
 import '../../view/home_view/home_view.dart';
 import '../../view/intro_view/intro_view.dart';
 import '../../view/loginView/login_view.dart';
@@ -35,6 +36,10 @@ class NavigateRoute {
         Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ThirdUserInfoView(thirdUser: r["user"]));
+      case RouteName.forwardMessageView:
+        Map<String, dynamic> r = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => ForwardMessageView(messagesList: r["messagesList"],receiverData:r["receiverData"]));
       default:
         return MaterialPageRoute(
             builder: (context) => const Scaffold(

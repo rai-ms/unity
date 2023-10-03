@@ -32,6 +32,8 @@ class MessageModel {
   /// When the message was read.
   String? readTime;
 
+  /// by default it will be 0
+  /// If star = 1 means star message
   int star;
 
   /// This is the model of every message

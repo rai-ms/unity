@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:unity/data/app_exceptions/app_exception.dart';
 import '../../../../../model/firebase/user_profile_model.dart';
+
 
 class UsersProfileFireStore {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -92,14 +94,20 @@ class UsersProfileFireStore {
     }
   }
 
-  static Future<bool> getStatus(String uID) async {
+  static Stream<bool> getStatus(String uID) {
     final userDoc = FirebaseFirestore.instance.collection("users").doc(uID);
-    final snapshot = await userDoc.get();
-    final data = snapshot.data();
-    if (data != null && data.containsKey("onLineStatus")) {
-      return data["onLineStatus"] ?? false; // Return the online status or false if not present
-    }
-      return false; // Return false if the document doesn't exist or doesn't contain the field
+    final streamController = StreamController<bool>();
+    userDoc.snapshots().listen((snapshot) {
+      final data = snapshot.data();
+      if (data != null && data.containsKey("onLineStatus")) {
+        streamController.add(data["onLineStatus"]  == "true"? true: false);
+      }
+      else
+      {
+        streamController.add(false);
+      }
+    });
+    return streamController.stream;
   }
 
 }

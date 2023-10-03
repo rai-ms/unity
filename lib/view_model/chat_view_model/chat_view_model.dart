@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +12,9 @@ class ChatViewModel extends ChangeNotifier {
   TextEditingController messCont = TextEditingController();
   FocusNode messFocus = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
+
   FirebaseAuth get auth => _auth;
   sendMessage(String receiver, {bool isImage = false, String imageUrl = ""}) {
     String mess = messCont.text.toString().trim();
@@ -35,6 +37,28 @@ class ChatViewModel extends ChangeNotifier {
       ));
     }
   }
+
+
+  forwardMessage(List<MessageModel> messageModel, String receiver) {
+    DateTime now = DateTime.now();
+    String time = now.toString();
+    String chatID = now.millisecondsSinceEpoch.toString();
+    for(int i = 0; i < messageModel.length; ++i){
+      messageModel[i].chatID = chatID;
+      messageModel[i].time = time;
+      messageModel[i].sentTime = time;
+      messageModel[i].isForwarded = 1;
+      messageModel[i].senderUID = _auth.currentUser!.uid;
+      messageModel[i].receiverUID = receiver;
+      messageModel[i].visibleNo = 3;
+      messageModel[i].status = 0;
+      messageModel[i].star = 0;
+      UsersChat.sendMessage(messageModel[i]);
+    }
+
+
+  }
+
 
   pickAndSendImage(String receiver) async {
     debugPrint("pick going to upload");
@@ -140,8 +164,57 @@ class ChatViewModel extends ChangeNotifier {
         .then((value) {})
         .onError((error, stackTrace) {});
   }
-
-  Future<bool> getStatus(String uID) async {
-    return await UsersProfileFireStore.getStatus(uID);
+  bool isOnline = false;
+  getStatus(String uID) {
+     UsersProfileFireStore.getStatus(uID).listen((isActive)
+     {
+       if(isOnline != isActive)
+       {
+         isOnline = isActive;
+         notifyListeners();
+       }
+     });
+     return UsersProfileFireStore.getStatus(uID);
   }
+
+
+  List<MessageModel> selectedMessages = [];
+  void addMessage(MessageModel messageModel){
+    selectedMessages.add(messageModel);
+  }
+  void removeMessage(int index)
+  {
+    selectedMessages.removeAt(index);
+  }
+  int isContains(MessageModel messageModel){
+    for(int i = 0; i < selectedMessages.length; ++i){
+      if(selectedMessages[i].chatID == messageModel.chatID){
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  void toggleMessage(MessageModel messageModel)
+  {
+    int isContain = isContains(messageModel);
+    if(isContain == -1)
+    {
+      addMessage(messageModel);
+      debugPrint("Added");
+      notifyListeners();
+    }
+    else
+    {
+      debugPrint("removed");
+      removeMessage(isContain);
+      notifyListeners();
+    }
+    for(var mes in selectedMessages){
+      debugPrint(mes.message);
+    }
+    debugPrint("${selectedMessages.length}");
+  }
+
+
 }

@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../model/firebase/message_model.dart';
 import '../../model/firebase/user_profile_model.dart';
-import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
-import '../../utils/app_helper/firebase_database/firestore/user_profile_firestore/users_profile_fireStore.dart';
+import '../../utils/app_helper/firebase_database/fireStore/chat_fireStore/users_chat.dart';
+import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -13,42 +13,60 @@ class HomeViewModel extends ChangeNotifier {
     _auth.signOut();
   }
 
-  int countUnseenMessages = 0;
-  List<int> countMessage = [];
-
-  Stream<List<MessageModel>> getAllMessage(String receiver) {
-    String currentUser = _auth.currentUser!.uid;
+  updateAllMessage(String receiver) {
+    String currentUser = _auth.currentUser!.uid.toString().trim();
     String now = DateTime.now().toString();
-
-    Stream<List<MessageModel>> chats =
-    UsersChat.getAllMessage(currentUser, receiver).map((messages) {
-      // debugPrint(messages.toString());
-      return messages.map((message) {
-        // debugPrint(message.message.toString());
-        if (message.senderUID != currentUser && message.status < 2) {
+    Stream<List<MessageModel>> chats = UsersChat.getAllMessage(currentUser, receiver);
+    chats.map((messages) async {
+      for(MessageModel message in messages)
+      {
+        if(message.senderUID != _auth.currentUser!.uid &&  message.status == 0){
           message.deliveredTime = now;
           message.status = 1;
-          // debugPrint(now.toString() + message.chatID);
-          UsersChat.updateMessageStatus(message)
-              .then((value) {
-            debugPrint("Message Updated:"+now.toString() + message.chatID);
-          })
-              .onError((error, stackTrace) {
-            debugPrint("Unable to Updated Message:" +now.toString() + message.chatID);
+          await UsersChat.updateMessageStatus(message).then((value){
+            debugPrint("Updation on database is success");
+          }).onError((error, stackTrace){
+            debugPrint("Updation on database is failed");
           });
         }
-        return message;
-      }).toList();
+      }
     });
-    // debugPrint(chats.toString());
     return chats;
   }
+  // List<UserProfileModel> _usersProfile = [];
+  // set usersProfile(value) => this
+  // List<UserProfileModel> get usersProfile {
+  //   UsersProfileFireStore.getAllUsers().listen((List<UserProfileModel> users) {
+  //     for(UserProfileModel userProf in users){
+  //       if(userProf.uid != _auth.currentUser!.uid){
+  //         _usersProfile.add(userProf);
+  //       }
+  //     }
+  //   });
+  //   return _usersProfile;
+  // }
 
   Stream<List<UserProfileModel>> getAllUser() {
-    Stream<List<UserProfileModel>> usersStream =  UsersProfileFireStore.getAllUsers();
-    return usersStream;
-  }
+    // debugPrint("This code is running and fetching the users profile registered in the app");
+   Stream<List<UserProfileModel>> profiles = UsersProfileFireStore.getAllUsers();
+    // debugPrint("Profiles fetched! $profiles");
+   profiles.map((List<UserProfileModel> usersProfile)async {
+     debugPrint("This code is running");
+     List<UserProfileModel> users = [];
+     for(UserProfileModel profileModel in usersProfile){
+       await updateAllMessage(profileModel.uid);
+      if (profileModel.uid != _auth.currentUser!.uid) {
+        {
+          users.add(profileModel);
+        }
+      }
+     }
+     debugPrint(users.length.toString());
+     return users;
+   });
 
+    return profiles;
+  }
 
 // UserProfileModel
   @override

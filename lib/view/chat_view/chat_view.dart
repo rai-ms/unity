@@ -6,6 +6,7 @@ import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/message_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
+import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/chat_view/widgets/chat_info_dialog.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 import '../../model/firebase/user_profile_model.dart';
@@ -29,33 +30,57 @@ class _ChatViewState extends State<ChatView> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
-                ),
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: widget.receiverData.image,
-                    height: 50,
-                    width: 50,
+          title: Consumer<ChatViewModel>(
+            builder: (context, provider, child) {
+              return provider.selectedMessages.isEmpty? Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
+                    ),
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: widget.receiverData.image,
+                        height: 50,
+                        width: 50,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              sizedBox(wid: 20),
-              Text(widget.receiverData.name),
-              Consumer<ChatViewModel>(builder: (context, provider, child)
-              {
-                return FutureBuilder<bool>(future: provider.getStatus(widget.receiverData.uid), builder: (context,AsyncSnapshot<bool> isOnline){
-                  if(!isOnline.hasData || isOnline.connectionState == ConnectionState.waiting) return const SizedBox();
-                  bool st = isOnline.data ?? false;
-                  return Icon(Icons.circle, color: st? AppColors.green:AppColors.grey,);
-                },);
-              }),
-              Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
-            ],
+                  sizedBox(wid: 20),
+                  Text(widget.receiverData.name),
+                  Consumer<ChatViewModel>(
+                    builder: (context, provider, child)
+                    {
+                      return StreamBuilder(
+                          stream: provider.getStatus(widget.receiverData.uid),
+                          builder: (context,isActive){
+                        if(!isActive.hasData || isActive.connectionState == ConnectionState.waiting) return const SizedBox();
+                          return Icon(Icons.circle, color: provider.isOnline? AppColors.green:AppColors.grey,);
+                      });
+                  }),
+                  // Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
+                ],
+              ) :
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                      onTap: ()
+                      {
+
+                      },
+                      child: const Icon(Icons.delete, size: 35,)),
+                  const SizedBox(width: 20,),
+                  InkWell(
+                      onTap: (){
+                          Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
+                      },
+                      child: const Icon(Icons.forward, size: 35,)),
+                  const SizedBox(width: 10,),
+                ],
+              );
+            }
           ),
         ),
         body: SafeArea(
@@ -91,76 +116,74 @@ class _ChatViewState extends State<ChatView> {
                               bool isImage = messages[index].img != null && messages[index].img != "";
                               String image = messages[index].img ?? "";
                               if (messages[index].visibleNo != 0) {
-                                return Dismissible(
-                                  onDismissed: (DismissDirection direction)
-                                  {
-
-                                  },
-                                  key: ValueKey<MessageModel>(messages[index]),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 200,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: isSender
-                                            ? MainAxisAlignment.end
-                                            : MainAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  // debugPrint("DeleteMessage");
-                                                  // provider.deleteMessage(
-                                                  //     messages[index], 0);
-                                                  showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
-
-                                                },
-                                                onDoubleTap: () {},
-                                                child: Card(
-                                                  child: Container(
-                                                    padding:const EdgeInsets.all(10),
-                                                    constraints:const BoxConstraints(maxWidth: 270),
-                                                    decoration: BoxDecoration(gradient: LinearGradient(colors:
-                                                    !isSender?[ AppColors.blueSplashScreen, AppColors.blueAccent] : [AppColors.blueAccent, AppColors.blueSplashScreen],), borderRadius: BorderRadius.circular(10)),
-                                                    child: Column(
-                                                      crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                                                      children: [
-                                                        if (isImage) Container(
-                                                            padding: const EdgeInsets.all(4),
-                                                            decoration: const BoxDecoration(
-                                                            color: AppColors.blueSplashScreen,
-                                                          ),
-                                                            child: CachedNetworkImage(imageUrl: image,),
-                                                          )
-                                                        else Text(
-                                                          messages[index].message,
-                                                          style: AppStyle.chatStyle,
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                       color: !(provider.isContains(messages[index]) == -1)? AppColors.green:null,
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 200,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: isSender
+                                          ? MainAxisAlignment.end
+                                          : MainAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: isSender? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                // debugPrint("DeleteMessage");
+                                                // provider.deleteMessage(
+                                                //     messages[index], 0);
+                                               provider.toggleMessage(messages[index]);
+                                              },
+                                              onDoubleTap: () {},
+                                              onLongPress: (){
+                                                showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
+                                              },
+                                              child: Card(
+                                                child: Container(
+                                                  padding:const EdgeInsets.all(10),
+                                                  constraints:const BoxConstraints(maxWidth: 270),
+                                                  decoration: BoxDecoration(gradient: LinearGradient(colors:
+                                                  !isSender?[ AppColors.blueSplashScreen, AppColors.blueAccent] : [AppColors.blueAccent, AppColors.blueSplashScreen],), borderRadius: BorderRadius.circular(10)),
+                                                  child: Column(
+                                                    crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                                    children: [
+                                                      if (isImage) Container(
+                                                          padding: const EdgeInsets.all(4),
+                                                          decoration: const BoxDecoration(
+                                                          color: AppColors.blueSplashScreen,
                                                         ),
-                                                        if (isSender) Icon(
-                                                            messages[index].status == 0
-                                                                ? Icons
-                                                                    .check
-                                                                : Icons.done_all,
-                                                            color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
-                                                            size: 20,
-                                                          )
-                                                      ],
-                                                    ),
+                                                          child: CachedNetworkImage(imageUrl: image,),
+                                                        )
+                                                      else Text(
+                                                        messages[index].message,
+                                                        style: AppStyle.chatStyle,
+                                                      ),
+                                                      if (isSender) Icon(
+                                                          messages[index].status == 0
+                                                              ? Icons
+                                                                  .check
+                                                              : Icons.done_all,
+                                                          color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
+                                                          size: 20,
+                                                        )
+                                                    ],
                                                   ),
                                                 ),
                                               ),
-                                              Text(
-                                                messages[index] .time.substring(11, 16),
-                                                style: AppStyle.blackNormal15,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                            ),
+                                            Text(
+                                              messages[index] .time.substring(11, 16),
+                                              style: AppStyle.blackNormal15,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
@@ -182,7 +205,8 @@ class _ChatViewState extends State<ChatView> {
                       child: TextFormField(
                         controller: provider.messCont,
                         focusNode: provider.messFocus,
-                        onFieldSubmitted: (_) {
+                        onFieldSubmitted: (_)
+                        {
                           provider.sendMessage(widget.receiverData.uid);
                         },
                         decoration: InputDecoration(
