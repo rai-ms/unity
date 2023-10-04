@@ -8,22 +8,9 @@ class ThirdUserViewModel extends ChangeNotifier
 {
   static UserProfileModel? thirdUser;
 
-  Future<List<MessageModel>> getAllImages() async {
+  Stream<List<MessageModel>> getAllImages() {
     final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-
-    if (thirdUser == null || currentUserUID == null) {
-      // Return an empty list if either thirdUser or currentUserUID is null
-      return [];
-    }
-
-    final messageList = await UsersChat.getAllMessage(thirdUser!.uid, currentUserUID).first;
-
-    // Filter and return only messages with images
-    final imageMessages = messageList.where((message) => message.img != null).toList();
-
-    return imageMessages;
+    return  UsersChat.getAllMessage(thirdUser!.uid, FirebaseAuth.instance.currentUser!.uid);
   }
-
-
 
 }

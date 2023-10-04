@@ -5,14 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unity/model/firebase/message_model.dart';
 import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
-import '../../utils/app_helper/firebase_database/firestore/chat_firestore/users_chat.dart';
+import '../../utils/app_helper/firebase_database/fireStore/chat_fireStore/users_chat.dart';
 import '../../utils/app_helper/firebase_database/storage_firebase/firebase_storage_image_upload.dart';
 
 class ChatViewModel extends ChangeNotifier {
   TextEditingController messCont = TextEditingController();
   FocusNode messFocus = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
 
   FirebaseAuth get auth => _auth;
@@ -145,7 +144,7 @@ class ChatViewModel extends ChangeNotifier {
         if (message.senderUID != currentUser && message.status < 2) {
           message.readTime = now.toString();
           message.status = 2;
-          message.deliveredTime = now.toString();
+          if(message.deliveredTime != "")message.deliveredTime = now.toString();
           // debugPrint(now.toString() + message.chatID);
           UsersChat.updateMessageStatus(message)
               .then((value) {})
@@ -164,6 +163,7 @@ class ChatViewModel extends ChangeNotifier {
         .then((value) {})
         .onError((error, stackTrace) {});
   }
+
   bool isOnline = false;
   getStatus(String uID) {
      UsersProfileFireStore.getStatus(uID).listen((isActive)
@@ -182,8 +182,7 @@ class ChatViewModel extends ChangeNotifier {
   void addMessage(MessageModel messageModel){
     selectedMessages.add(messageModel);
   }
-  void removeMessage(int index)
-  {
+  void removeMessage(int index){
     selectedMessages.removeAt(index);
   }
   int isContains(MessageModel messageModel){
@@ -194,7 +193,10 @@ class ChatViewModel extends ChangeNotifier {
     }
     return -1;
   }
-
+  removeAllFromList(){
+    selectedMessages.clear();
+    notifyListeners();
+  }
   void toggleMessage(MessageModel messageModel)
   {
     int isContain = isContains(messageModel);
@@ -216,9 +218,30 @@ class ChatViewModel extends ChangeNotifier {
     debugPrint("${selectedMessages.length}");
   }
 
-  void deleteMessages()
-  {
+  bool isAvailableToDeleteForAll() {
+    String sender = _auth.currentUser!.uid.toString();
+    for(int i = 0; i < selectedMessages.length; ++i){
+      if(selectedMessages[i].senderUID != sender){
+        return false;
+      }
+    }
+    return true;
+  }
 
+  void deleteForMe(){
+    deleteMessages(code:1);
+  }
+
+  void deleteForAll(){
+    deleteMessages(code: 0);
+  }
+
+  void deleteMessages({int code = 1}){
+      for(int i = 0; i < selectedMessages.length; ++i)
+      {
+        deleteMessage(selectedMessages[i], code);
+      }
+    removeAllFromList();
   }
 
 }

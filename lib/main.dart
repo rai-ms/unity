@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(providers: [ChangeNotifierProvider(create: (context)=> ChatViewModel())], child: MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      theme: ThemeData
+      (
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),

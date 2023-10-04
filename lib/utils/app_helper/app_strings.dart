@@ -11,8 +11,11 @@ class AppStrings {
   static const String invalidUrl = "Invalid Url";
   static const String invalidUser = "Invalid User";
   static const String errorOccured = "Error Occured";
+  static const String deleteMessage = "Delete Message";
   static const String notValidMail = "Not Valid Mail";
   static const String id = "Id";
+  static const String deleteForAll = "Delete for All";
+  static const String deleteForMe = "Delete for Me";
   static const String forwarded = "Forwarded";
   static const String oo = "00:00:00.000";
   static const String accountCreation = "Account Creation Failed, fill each and every thing correctly";

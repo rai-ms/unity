@@ -28,7 +28,7 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
   }
 
   void loadImages() async {
-    images = await ThirdUserViewModel().getAllImages();
+    // images = await ThirdUserViewModel().getAllImages();
   }
 
   @override
@@ -106,9 +106,14 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                       height: 60,
                       child: Consumer<ThirdUserViewModel>(
                         builder: (context, provider, child) {
-                          FutureBuilder(
-                            future: provider.getAllImages(),
+                          StreamBuilder(
+                            stream: provider.getAllImages(),
                             builder: (context,AsyncSnapshot<List<MessageModel>> imagesList){
+                              // debugPrint(imagesList.length.toString());
+                              List<MessageModel>? images = imagesList.data;
+
+                              debugPrint(images!.length.toString());
+
                               if(!imagesList.hasData || imagesList.connectionState == ConnectionState.waiting){
                                 return const Center(child: CircularProgressIndicator());
                               }
@@ -121,10 +126,12 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: Center(
-                                        child: CachedNetworkImage(
-                                          imageUrl: imagesList.data![index].img ?? "",
-                                        )),
+                                    child: const Center(
+                                        child: Text("Images"),
+                                        // CachedNetworkImage(
+                                        //   imageUrl: imagesList.data![index].img ?? "",
+                                        // )
+                                    ),
                                   );
                                 },
                                 itemCount: imagesList.data!.length,
@@ -132,7 +139,7 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                             },
                           );
                           if(images!.isEmpty){
-                            return const Text("No Image Found!");
+                            return Text("No Image Found! ${images!.length}");
                           }
                           else {
                             return Container();

@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
@@ -8,6 +7,7 @@ import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/chat_view/widgets/chat_info_dialog.dart';
+import 'package:unity/view/chat_view/widgets/delete_dailog.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/app_strings.dart';
@@ -26,56 +26,73 @@ class _ChatViewState extends State<ChatView> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<ChatViewModel>(
-            builder: (context, provider, child) {
-              return provider.selectedMessages.isEmpty? Row(
-                children: [
-                  InkWell(
-                      onTap: ()
-                      {
-                          Navigator.pop(context);
-                      },
-                      child: const Icon(Icons.arrow_back)),
-                  sizedBox(wid: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
-                    ),
-                    child: ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: widget.receiverData.image,
-                        height: 50,
-                        width: 50,
+            builder: (context, provider, child)
+            {
+              return provider.selectedMessages.isEmpty? InkWell(
+                onTap: (){
+                  Navigator.pushNamed(context, RouteName.thirdUserInfoView, arguments: {"user" : widget.receiverData});
+                },
+                child: Row(
+                  children: [
+                    InkWell(
+                        onTap: ()
+                        {
+                            Navigator.pop(context);
+                        },
+                        child: const Icon(Icons.arrow_back)),
+                    sizedBox(wid: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
+                      ),
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: widget.receiverData.image,
+                          height: 50,
+                          width: 50,
+                        ),
                       ),
                     ),
-                  ),
-                  sizedBox(wid: 20),
-                  Text(widget.receiverData.name),
-                  StreamBuilder(
-                      stream: provider.getStatus(widget.receiverData.uid),
-                      builder: (context,isActive){
-                        if(!isActive.hasData || isActive.connectionState == ConnectionState.waiting) return const SizedBox();
-                        return Icon(Icons.circle, color: provider.isOnline? AppColors.green:AppColors.grey,);
-                      }),
-                  // Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
-                ],
+                    sizedBox(wid: 20),
+                    Text(widget.receiverData.name),
+                    StreamBuilder(
+                        stream: provider.getStatus(widget.receiverData.uid),
+                        builder: (context,isActive){
+                          if(!isActive.hasData || isActive.connectionState == ConnectionState.waiting) return const SizedBox();
+                          return Icon(Icons.circle, color: provider.isOnline? AppColors.green:AppColors.grey,);
+                        }),
+                    // Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
+                  ],
+                ),
               ) :
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                      onTap: ()
-                      {
-
-                      },
-                      child: const Icon(Icons.delete, size: 35,)),
-                  const SizedBox(width: 20,),
-                  InkWell(
                       onTap: (){
-                        Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
+                        provider.removeAllFromList();
                       },
-                      child: const Icon(Icons.forward, size: 35,)),
-                  const SizedBox(width: 10,),
+                  child: const Icon(Icons.arrow_back)),
+                  Row(
+                   children: [
+                     InkWell(
+                         onTap: ()
+                         {
+                           bool deleteAll = provider.isAvailableToDeleteForAll();
+                            showDialog(context: context, builder: (context)=> DeleteDialog(deleteForMe: provider.deleteForMe,deleteForAll: provider.deleteForAll,isDeleteForAll:deleteAll ,));
+                             // provider.deleteMessages();
+                         },
+                         child: const Icon(Icons.delete, size: 35,)),
+                     const SizedBox(width: 20,),
+                     InkWell(
+                         onTap: (){
+                           Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
+                         },
+                         child: const Icon(Icons.forward, size: 35,)),
+                     const SizedBox(width: 10,),
+                   ],
+                 )
                 ],
               );
             }
@@ -87,8 +104,7 @@ class _ChatViewState extends State<ChatView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child:
-              Consumer<ChatViewModel>(builder: (context, provider, child)
+              child:Consumer<ChatViewModel>(builder: (context, provider, child)
               {
                 return StreamBuilder<List<MessageModel>>(
                     stream: provider.getAllMessage(widget.receiverData.uid),
@@ -184,7 +200,7 @@ class _ChatViewState extends State<ChatView> {
                                             ),
                                           ),
                                           Text(
-                                            messages[index] .time.substring(11, 16),
+                                            messages[index].time.substring(11, 16),
                                             style: AppStyle.blackNormal15,
                                           ),
                                         ],

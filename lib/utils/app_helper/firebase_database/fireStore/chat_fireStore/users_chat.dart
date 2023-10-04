@@ -18,11 +18,12 @@ class UsersChat {
 
   static Stream<List<MessageModel>> getAllMessage(
       String senderUID, String receiverUID) {
+    // getAllImages(receiverUID);
     final chatRoomId = getChatRoomId(senderUID, receiverUID);
     // debugPrint(chatRoomId);
     final messageCollection = storeRef.doc(chatRoomId).collection("messages");
     // Converting
-    return messageCollection.orderBy("time").snapshots().map((querySnapshot) {
+    return messageCollection.snapshots().map((querySnapshot) {
       final List<MessageModel> messageList = [];
       for (final doc in querySnapshot.docs) {
         final Map<String, dynamic> data = doc.data();
@@ -31,6 +32,20 @@ class UsersChat {
       }
       return messageList;
     });
+  }
+
+  static getAllImages(String receiver) {
+    String currentUser = _auth.currentUser!.uid;
+
+    UsersChat.getAllMessage(currentUser, receiver).map((messages) {
+      debugPrint(messages.toString());
+      return messages.map((message) {
+        debugPrint(message.message.toString());
+        return message;
+      }).toList();
+    });
+    // debugPrint(chats.toString());
+
   }
 
   static Future<void> sendMessage(MessageModel message) async {
@@ -87,6 +102,4 @@ class UsersChat {
     }
   }
 
-  /// TODO
-  static Future<void> deleteWholeMessage() async {}
 }
