@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:unity/model/firebase/message_model.dart';
+import 'package:unity/res/components/custom_toast.dart';
 import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 import '../../utils/app_helper/firebase_database/fireStore/chat_fireStore/users_chat.dart';
 import '../../utils/app_helper/firebase_database/storage_firebase/firebase_storage_image_upload.dart';
@@ -232,16 +234,82 @@ class ChatViewModel extends ChangeNotifier {
     deleteMessages(code:1);
   }
 
-  void deleteForAll(){
+  void deleteForAll()
+  {
     deleteMessages(code: 0);
   }
 
-  void deleteMessages({int code = 1}){
-      for(int i = 0; i < selectedMessages.length; ++i)
+  void deleteMessages({int code = 0}){
+    if(code == 0)
       {
-        deleteMessage(selectedMessages[i], code);
+        // Delete for all for sender Message only
+        for(int i = 0; i < selectedMessages.length; ++i)
+        {
+          deleteMessage(selectedMessages[i], 0);
+        }
+      }
+    else
+      {
+
+        for(int i = 0; i < selectedMessages.length; ++i)
+        {
+          // If there exist any receiver message
+          if(selectedMessages[i].senderUID != _auth.currentUser!.uid) {
+            if(selectedMessages[i].visibleNo != 3) {
+              deleteMessage(selectedMessages[i], 0);
+            }
+            else {
+              deleteMessage(selectedMessages[i], 2);
+            }
+          }
+          else {
+            if(selectedMessages[i].visibleNo != 3) {
+              deleteMessage(selectedMessages[i], 0);
+            }
+            else {
+              deleteMessage(selectedMessages[i], 1);
+            }
+          }
+        }
       }
     removeAllFromList();
   }
+
+  bool isAvailableToStar(){
+    if(selectedMessages[0].senderUID != _auth.currentUser!.uid){
+      return true;
+    }
+    return false;
+  }
+
+  toggleStar()
+  {
+    if(selectedMessages[0].star  == 1){
+      selectedMessages[0].star  = 0;
+    }
+    else
+    {
+      selectedMessages[0].star  = 1;
+    }
+    try{
+      UsersChat.updateMessageStar(selectedMessages[0]);
+      selectedMessages.clear();
+    } catch (e){
+      debugPrint(e.toString());
+    }
+    notifyListeners();
+  }
+
+  Future<void> copyToClipboard(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: selectedMessages[0].message)).then((value){
+      selectedMessages.clear();
+      CustomToast(context: context, message: "Text Copied");
+      notifyListeners();
+    }).onError((error, stackTrace){
+
+    });
+  }
+
+
 
 }

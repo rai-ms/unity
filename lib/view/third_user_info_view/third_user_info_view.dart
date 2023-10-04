@@ -71,12 +71,6 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                           Text("Block User", style: AppStyle.blueSplashBold20,)
                         ],
                       ),
-                      // Column(
-                      //   children: [
-                      //     const Icon(Icons.paypal, color: AppColors.blueSplashScreen,size: 40,),
-                      //     Text("Payment", style: AppStyle.blueSplashBold20,)
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -102,51 +96,51 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                       padding: const EdgeInsets.only(left: 20.0,top: 10),
                       child: Text("Images",style: AppStyle.blackBold24,),
                     ),
-                    SizedBox(
-                      height: 60,
-                      child: Consumer<ThirdUserViewModel>(
-                        builder: (context, provider, child) {
-                          StreamBuilder(
-                            stream: provider.getAllImages(),
-                            builder: (context,AsyncSnapshot<List<MessageModel>> imagesList){
-                              // debugPrint(imagesList.length.toString());
-                              List<MessageModel>? images = imagesList.data;
-
-                              debugPrint(images!.length.toString());
-
-                              if(!imagesList.hasData || imagesList.connectionState == ConnectionState.waiting){
-                                return const Center(child: CircularProgressIndicator());
-                              }
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: const Center(
-                                        child: Text("Images"),
-                                        // CachedNetworkImage(
-                                        //   imageUrl: imagesList.data![index].img ?? "",
-                                        // )
-                                    ),
-                                  );
-                                },
-                                itemCount: imagesList.data!.length,
-                              );
-                            },
-                          );
-                          if(images!.isEmpty){
-                            return Text("No Image Found! ${images!.length}");
-                          }
-                          else {
-                            return Container();
-                          }
-                        }
-                      ),
-                    ),
+                    // SizedBox(
+                    //   height: 60,
+                    //   child: Consumer<ThirdUserViewModel>(
+                    //     builder: (context, provider, child) {
+                    //       StreamBuilder(
+                    //         stream: provider.getAllImages(),
+                    //         builder: (context,AsyncSnapshot<List<MessageModel>> imagesList){
+                    //           // debugPrint(imagesList.length.toString());
+                    //           List<MessageModel>? images = imagesList.data;
+                    //
+                    //           debugPrint(images!.length.toString());
+                    //
+                    //           if(!imagesList.hasData || imagesList.connectionState == ConnectionState.waiting){
+                    //             return const Center(child: CircularProgressIndicator());
+                    //           }
+                    //           return ListView.builder(
+                    //             scrollDirection: Axis.horizontal,
+                    //             shrinkWrap: true,
+                    //             itemBuilder: (context, index) {
+                    //               return Container(
+                    //                 padding: const EdgeInsets.all(10),
+                    //                 decoration: BoxDecoration(
+                    //                   borderRadius: BorderRadius.circular(20),
+                    //                 ),
+                    //                 child: const Center(
+                    //                     child: Text("Images"),
+                    //                     // CachedNetworkImage(
+                    //                     //   imageUrl: imagesList.data![index].img ?? "",
+                    //                     // )
+                    //                 ),
+                    //               );
+                    //             },
+                    //             itemCount: imagesList.data!.length,
+                    //           );
+                    //         },
+                    //       );
+                    //       if(images!.isEmpty){
+                    //         return Text("No Image Found! ${images!.length}");
+                    //       }
+                    //       else {
+                    //         return Container();
+                    //       }
+                    //     }
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/message_model.dart';
@@ -76,6 +77,21 @@ class _ChatViewState extends State<ChatView> {
                   child: const Icon(Icons.arrow_back)),
                   Row(
                    children: [
+                     if(provider.selectedMessages.length == 1)
+                       Row(
+                         children: [
+                           if(provider.isAvailableToStar()) InkWell(onTap:(){
+                             provider.toggleStar();
+                           },
+                               child: const Icon(Icons.star)),
+                           const SizedBox(width: 20,),
+                           InkWell(onTap:(){
+                             provider.copyToClipboard(context);
+                           },
+                               child: const Icon(Icons.copy)),
+                         ],
+                       ),
+                     const SizedBox(width: 20,),
                      InkWell(
                          onTap: ()
                          {
@@ -106,7 +122,7 @@ class _ChatViewState extends State<ChatView> {
             Expanded(
               child:Consumer<ChatViewModel>(builder: (context, provider, child)
               {
-                return StreamBuilder<List<MessageModel>>(
+                return StreamBuilder<List<MessageModel>> (
                     stream: provider.getAllMessage(widget.receiverData.uid),
                     builder: (context, AsyncSnapshot<List<MessageModel>> snapshot)
                     {
@@ -129,7 +145,7 @@ class _ChatViewState extends State<ChatView> {
                             bool isSender = messages[index].senderUID == provider.auth.currentUser!.uid;
                             bool isImage = messages[index].img != null && messages[index].img != "";
                             String image = messages[index].img ?? "";
-                            if (messages[index].visibleNo != 0) {
+                            if (messages[index].visibleNo != 0 && ((isSender && messages[index].visibleNo != 1) || (!isSender && messages[index].visibleNo != 2))) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Container(
@@ -167,6 +183,7 @@ class _ChatViewState extends State<ChatView> {
                                                 child: Column(
                                                   crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                                   children: [
+                                                    if(messages[index].star == 1) const Icon(Icons.star, color: AppColors.white,),
                                                     if(messages[index].isForwarded == 1) SizedBox(
                                                       width: 100,
                                                       child: Row(
@@ -193,7 +210,7 @@ class _ChatViewState extends State<ChatView> {
                                                           : Icons.done_all,
                                                       color: messages[index].status == 2 ? AppColors.yellow :AppColors.grey,
                                                       size: 20,
-                                                    )
+                                                    ),
                                                   ],
                                                 ),
                                               ),

@@ -39,7 +39,7 @@ class UsersChat {
 
     UsersChat.getAllMessage(currentUser, receiver).map((messages) {
       debugPrint(messages.toString());
-      return messages.map((message) {
+      messages.map((message) {
         debugPrint(message.message.toString());
         return message;
       }).toList();
@@ -77,6 +77,21 @@ class UsersChat {
         // debugPrint("Message Updated");
       }).onError((error, stackTrace) {
         // debugPrint("Message Updation failed");
+      });
+    }
+  }
+
+  static updateMessageStar(MessageModel message)async {
+    final chatRoomId = getChatRoomId(message.senderUID, message.receiverUID);
+    final messageCollection = storeRef.doc(chatRoomId).collection("messages");
+    final messageDoc = await messageCollection.doc(message.chatID).get();
+    if (messageDoc.exists) {
+      await messageCollection
+          .doc(message.chatID)
+          .update({ "star": message.star}).then((value) async {
+        debugPrint("Star Updated");
+      }).onError((error, stackTrace) {
+        debugPrint("Star Updation failed");
       });
     }
   }
