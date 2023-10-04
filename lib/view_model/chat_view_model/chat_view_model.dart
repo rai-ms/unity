@@ -216,5 +216,9 @@ class ChatViewModel extends ChangeNotifier {
     debugPrint("${selectedMessages.length}");
   }
 
+  void deleteMessages()
+  {
+
+  }
 
 }

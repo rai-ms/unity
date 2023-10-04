@@ -14,6 +14,7 @@ class MessageModel {
   /// if [visibleNo] == 2? message will only be visible to the sender
   /// if [visibleNo] == 3? message will be visible to everyone
   int visibleNo;
+
   String chatID;
 
   /// Message status:

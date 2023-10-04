@@ -13,6 +13,7 @@ class AppStrings {
   static const String errorOccured = "Error Occured";
   static const String notValidMail = "Not Valid Mail";
   static const String id = "Id";
+  static const String forwarded = "Forwarded";
   static const String oo = "00:00:00.000";
   static const String accountCreation = "Account Creation Failed, fill each and every thing correctly";
   static const String passwordAndConfirm = "Password and Confirm Password can't be same";

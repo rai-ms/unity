@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unity/utils/routes/navigate_route.dart';
 import 'package:unity/utils/routes/route_name.dart';
+import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(providers: [ChangeNotifierProvider(create: (context)=> ChatViewModel())], child: MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -26,6 +28,6 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: RouteName.splashscreen,
       onGenerateRoute: NavigateRoute.onGenerate,
-    );
+    ),);
   }
 }
