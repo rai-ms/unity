@@ -6,12 +6,12 @@ import '../utils/routes/route_name.dart';
 
 class SplashScreenServices {
   static UserProfileModel? userProfileModel;
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
   static checkAuthentication(BuildContext context) async {
     var user = _auth.currentUser;
     if (user != null) {
-      await UsersProfileFireStore.getCurrentUserProfile(user.uid).map((event){
+      UsersProfileFireStore.getCurrentUserProfile(user.uid).map((event){
         userProfileModel = event;
         debugPrint("ABCD$userProfileModel");
       });

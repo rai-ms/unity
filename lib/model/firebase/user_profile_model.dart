@@ -1,7 +1,3 @@
-import 'dart:ffi';
-
-import 'package:flutter/cupertino.dart';
-
 class UserProfileModel {
   String name, email, pass, image, uid, joinDate;
   List<String> blockedUID; // List of blocked user IDs

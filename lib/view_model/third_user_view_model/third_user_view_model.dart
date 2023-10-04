@@ -24,6 +24,7 @@ class ThirdUserViewModel extends ChangeNotifier
       });
       return images;
     });
+    return null;
 
     // return  UsersChat.getAllMessage(thirdUser!.uid, FirebaseAuth.instance.currentUser!.uid);
   }

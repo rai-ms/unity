@@ -33,7 +33,7 @@ class LoginViewModel extends ChangeNotifier {
     setLoading(true);
 
     try {
-      final authResult = await _auth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
         email: mailCont.text.toString().trim(),
         password: passCont.text.toString().trim(),
       );

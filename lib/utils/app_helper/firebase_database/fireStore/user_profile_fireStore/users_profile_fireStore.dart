@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:unity/data/app_exceptions/app_exception.dart';
 import '../../../../../model/firebase/user_profile_model.dart';
 
@@ -52,18 +53,23 @@ class UsersProfileFireStore {
     return false;
   }
 
+
+  /// This method will returns all the users
   static Stream<dynamic> getAllUser() {
     final fireStoreStream = storeRef.snapshots();
     return fireStoreStream;
   }
 
+
+  /// This method will returns all the users except current user
   static Stream<List<UserProfileModel>> getAllUsers() {
     final fireStoreStream = storeRef.snapshots();
     return fireStoreStream.map((QuerySnapshot<Map<String, dynamic>> snapshot) {
       final List<UserProfileModel> users = [];
       for (final DocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
         final Map<String, dynamic> data = doc.data()!;
-        users.add(UserProfileModel.fromJson(data));
+        UserProfileModel user = UserProfileModel.fromJson(data);
+        if(user.uid != _auth.currentUser!.uid) users.add(user);
       }
       return users;
     });
@@ -91,6 +97,35 @@ class UsersProfileFireStore {
     if (currentUserUID != null) {
       final userDoc = FirebaseFirestore.instance.collection("users").doc(currentUserUID);
       await userDoc.update({"onLineStatus": "$status"}).then((value){}).onError((error, stackTrace){});
+    }
+  }
+
+  /// This method is used to block/unblock the user, it add/remove the blocked UID in the List of UserModel BlockedUID
+  static blockUser(String userUID ,{bool remove = false}) async
+  {
+    final currentUserUID = _auth.currentUser?.uid;
+    List<String> blockUID = [];
+    if (currentUserUID != null) {
+      final userDoc = FirebaseFirestore.instance.collection("users").doc(currentUserUID).get().then((value){
+        try{
+          final usersProfile = UserProfileModel.fromJson(value.data() as Map<String, dynamic>);
+          List<String> blockUID = usersProfile.blockedUID;
+        }catch(e){}
+        // debugPrint(value.data().toString() ?? "");
+      });
+      if(!remove){
+        blockUID.add(userUID);
+      }
+      else
+      {
+        for(int i = 0; i < blockUID.length; ++i){
+          if(blockUID[i] == userUID){
+            blockUID.removeAt(i);
+            break;
+          }
+        }
+      }
+      FirebaseFirestore.instance.collection("users").doc(currentUserUID).update({"blockedUID":blockUID}).then((value) {}).onError((error, stackTrace){});
     }
   }
 

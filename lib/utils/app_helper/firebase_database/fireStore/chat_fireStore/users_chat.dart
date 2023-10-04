@@ -56,8 +56,7 @@ class UsersChat {
         .set(message.toMap())
         .then((value) {
       debugPrint("message sent");
-    })
-        .onError((error, stackTrace) {
+    }).onError((error, stackTrace) {
       throw InvalidUrl(error.toString());
     });
   }
@@ -115,6 +114,11 @@ class UsersChat {
         // debugPrint("Message Updation failed");
       });
     }
+  }
+
+  static getCurrentUserLastMessage(String receiverUID){
+    final chatRoomId = getChatRoomId(_auth.currentUser!.uid, receiverUID);
+    final messageCollection = storeRef.doc(chatRoomId).collection("messages").limit(1).snapshots();
   }
 
 }

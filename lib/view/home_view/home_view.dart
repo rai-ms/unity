@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
-import 'package:unity/services/splashscreen_service.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/home_view/widgets/user_profile_dialog.dart';

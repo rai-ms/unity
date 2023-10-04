@@ -5,6 +5,7 @@ import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/utils/routes/route_name.dart';
 
 import '../../../utils/app_helper/app_color.dart';
+import '../../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 
 class UserProfileDialog extends StatelessWidget {
   const UserProfileDialog({super.key, required this.user});
@@ -76,7 +77,7 @@ class UserProfileDialog extends StatelessWidget {
                     InkWell(
                         onTap: ()
                         {
-
+                          UsersProfileFireStore.blockUser(user.uid);
                         },
                         child: const Icon(Icons.warning_amber, color: AppColors.blueSplashScreen,)),
                   ],

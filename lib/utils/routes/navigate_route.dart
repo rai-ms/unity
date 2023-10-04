@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/signup_view/signup_view.dart';
 import '../../view/chat_view/chat_view.dart';
-import '../../view/chat_view/widgets/forward_message.dart';
+import '../../view/forward_message_view/forward_message.dart';
 import '../../view/home_view/home_view.dart';
 import '../../view/intro_view/intro_view.dart';
 import '../../view/loginView/login_view.dart';

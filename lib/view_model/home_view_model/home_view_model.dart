@@ -46,7 +46,8 @@ class HomeViewModel extends ChangeNotifier {
   //   return _usersProfile;
   // }
 
-  Stream<List<UserProfileModel>> getAllUser() {
+  Stream<List<UserProfileModel>> getAllUser()
+  {
     // debugPrint("This code is running and fetching the users profile registered in the app");
    Stream<List<UserProfileModel>> profiles = UsersProfileFireStore.getAllUsers();
     // debugPrint("Profiles fetched! $profiles");

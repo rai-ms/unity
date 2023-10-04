@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
