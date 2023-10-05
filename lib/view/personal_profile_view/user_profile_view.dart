@@ -94,23 +94,23 @@ class _UserProfileViewState extends State<UserProfileView> {
                     Text("Find Blocked User's UID's ${widget.user.blockedUID.length} \n         Tap to Unblock"),
                     SizedBox(
                         height: 100,
-                        width: 350,
                         child: ListView.builder(
-                          scrollDirection: Axis.vertical,
+                          scrollDirection: Axis.horizontal,
                           itemBuilder: (context,index)=>
-                        // Consumer<HomeViewModel>(
-                        //   builder: (context, provider, child)
-                        //   {
-                        //     StreamBuilder(stream: provider.getUserProfileData(widget.user.blockedUID[index]), builder: (context, value){
-                        //
-                        //       return Container(
-                        //         child: Text("${widget.user.blockedUID[index]}"),
-                        //       );
-                        //     },);
-                        //
-                        //   }
-                        // ),
-                           Text(widget.user.blockedUID[index]),
+                          Consumer<HomeViewModel>(
+                            builder: (context, provider, child)
+                            {
+                              return Container(
+                                height: 60,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(color: AppColors.blueSplashScreen, width: 2),
+                                ),
+                                child: Text(widget.user.blockedUID[index]),
+                              );
+                            }
+                        ),
                       itemCount: widget.user.blockedUID.length,)
                     ),
                   ],

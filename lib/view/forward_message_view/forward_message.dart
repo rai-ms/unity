@@ -22,7 +22,7 @@ class _ForwardMessageViewState extends State<ForwardMessageView> {
         providers:
         [
           ChangeNotifierProvider(create: (context)=> HomeViewModel()),
-          // ChangeNotifierProvider(create: (context)=> ChatViewModel()),
+          ChangeNotifierProvider(create: (context)=> ChatViewModel()),
         ],
       child: Scaffold(
         body: Column(

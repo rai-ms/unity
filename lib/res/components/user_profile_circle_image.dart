@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+
 import '../../utils/app_helper/app_color.dart';
 
-Widget userProfileImageInCircle(String image)
-{
+Widget userProfileImageInCircle(String image){
   return Hero(
     tag: "Profile",
     child: Container(

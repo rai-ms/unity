@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
+import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view/home_view/widgets/user_profile_dialog.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
@@ -16,7 +17,8 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends State<HomeView>
+{
   @override
   void initState() {
     UnknownPageService.checkAuthHomePage(context);
@@ -43,13 +45,14 @@ class _HomeViewState extends State<HomeView> {
       ],
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: AppColors.blueSplashScreen,
           title: Row(
             children: [
               Consumer<HomeViewModel>(builder: (context, provider, child) {
                 if(provider.appLoginUser == null){
                   return const SizedBox();
                 }
-                return Text("User is:${provider.appLoginUser!.name.toString()}");
+                return Text("Unity",style: AppStyle.whiteBold30,);
               }),
             ],
           ),
@@ -62,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
                   onTap: (){
                     Navigator.pushNamed(context, RouteName.userProfileView, arguments: {'user':provider.appLoginUser});
                   },
-                  child: const Icon(Icons.menu));
+                  child: const Icon(Icons.menu, color: AppColors.white,));
             }),
           ],
         ),
@@ -93,9 +96,6 @@ class _HomeViewState extends State<HomeView> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Consumer<HomeViewModel>(
                                       builder: (context, provider, child) {
-                                        if(provider.appLoginUser!.uid == null){
-                                          Future.delayed(const Duration(seconds: 1));
-                                        }
                                         if(users[index].uid == provider.appLoginUser!.uid){
                                           return const SizedBox();
                                         }

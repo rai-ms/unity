@@ -20,15 +20,6 @@ class ChatView extends StatefulWidget {
 }
 
 class _ChatViewState extends State<ChatView> {
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    ChatViewModel.resetData();
-    super.initState();
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +28,7 @@ class _ChatViewState extends State<ChatView> {
         title: Consumer<ChatViewModel>(
             builder: (context, provider, child)
             {
-              return ChatViewModel.selectedMessages.isEmpty? InkWell(
+              return provider.selectedMessages.isEmpty? InkWell(
                 onTap: (){
                   Navigator.pushNamedAndRemoveUntil(context, RouteName.thirdUserInfoView, arguments: {"user" : widget.receiverData}, (route)=> route.isFirst);
                 },
@@ -88,13 +79,13 @@ class _ChatViewState extends State<ChatView> {
                   child: const Icon(Icons.arrow_back)),
                   Row(
                    children: [
-                     if(ChatViewModel.selectedMessages.length == 1)
+                     if(provider.selectedMessages.length == 1)
                        Row(
                          children: [
                            if(provider.isAvailableToStar()) InkWell(onTap:(){
                              provider.toggleStar();
                            },
-                               child: const Icon(Icons.star, color: AppColors.yellow,)),
+                               child: const Icon(Icons.star)),
                            const SizedBox(width: 20,),
                            InkWell(onTap:(){
                              provider.copyToClipboard(context);
@@ -114,7 +105,7 @@ class _ChatViewState extends State<ChatView> {
                      const SizedBox(width: 20,),
                      InkWell(
                          onTap: (){
-                           Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :ChatViewModel.selectedMessages, "receiverData":widget.receiverData});
+                           Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
                          },
                          child: const Icon(Icons.forward, size: 35,)),
                      const SizedBox(width: 10,),

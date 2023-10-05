@@ -35,7 +35,6 @@ class HomeViewModel extends ChangeNotifier {
     });
     return chats;
   }
-
   // List<UserProfileModel> _usersProfile = [];
   // set usersProfile(value) => this
   // List<UserProfileModel> get usersProfile {
@@ -48,9 +47,26 @@ class HomeViewModel extends ChangeNotifier {
   //   });
   //   return _usersProfile;
   // }
+  UserProfileModel? _appLoginUser;
+  bool isLogin = false;
+  UserProfileModel? get appLoginUser {
+    if (!isLogin) {
+      isLogin = true;
+      getCurrentUser();
+    }
+    return _appLoginUser;
+  }
+
+  List<String> blockuID = [];
+
+  bool isContains(String id){
+    return false;
+  }
 
   Stream<List<UserProfileModel>> getAllUser()
   {
+    UserProfileModel currentUser = appLoginUser!;
+    blockuID = currentUser.blockedUID;
     // debugPrint("This code is running and fetching the users profile registered in the app");
    Stream<List<UserProfileModel>> profiles = UsersProfileFireStore.getAllUsers();
     // debugPrint("Profiles fetched! $profiles");
@@ -92,15 +108,6 @@ class HomeViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  UserProfileModel? _appLoginUser;
-  bool isLogin = false;
-  UserProfileModel? get appLoginUser {
-    if (!isLogin) {
-      isLogin = true;
-      getCurrentUser();
-    }
-    return _appLoginUser;
-  }
 
   void getCurrentUser() {
     UsersProfileFireStore.getCurrentUserProfile(_auth.currentUser!.uid)
