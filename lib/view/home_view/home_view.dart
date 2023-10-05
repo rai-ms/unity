@@ -82,6 +82,7 @@ class _HomeViewState extends State<HomeView>
                       builder: (context,
                           AsyncSnapshot<List<UserProfileModel>> snapshot) {
                         List<UserProfileModel>? users = snapshot.data;
+                        users = provider.removeBlockedUsers(users);
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
@@ -96,20 +97,20 @@ class _HomeViewState extends State<HomeView>
                                   padding: const EdgeInsets.all(8.0),
                                   child: Consumer<HomeViewModel>(
                                       builder: (context, provider, child) {
-                                        if(users[index].uid == provider.appLoginUser!.uid){
+                                        if(users![index].uid == provider.appLoginUser!.uid){
                                           return const SizedBox();
                                         }
                                     return ListTile(
                                       onTap: () {
                                         Navigator.pushNamed(
                                             context, RouteName.chatView,
-                                            arguments: {"user": users[index]});
+                                            arguments: {"user": users![index]});
                                       },
                                       title: Text(users[index].name),
                                       // trailing: Text(provider.countMessage.toString()),
                                       leading: InkWell(
                                         onTap: (){
-                                          showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users[index],)));
+                                          showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users![index],)));
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(

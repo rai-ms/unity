@@ -79,11 +79,11 @@ class HomeViewModel extends ChangeNotifier {
      for(UserProfileModel profileModel in usersProfile){
        await updateAllMessage(profileModel.uid);
       if (profileModel.uid != _auth.currentUser!.uid && !isContains(profileModel.uid)) {
-          debugPrint("Item Added");
+          // debugPrint("Item Added");
           users.add(profileModel);
       }
       else {
-        debugPrint("Item not Added");
+        // debugPrint("Item not Added");
       }
      }
      // debugPrint(users.length.toString());
@@ -137,6 +137,19 @@ class HomeViewModel extends ChangeNotifier {
   static setUserStatus(bool status)
   {
     UsersProfileFireStore.updateStatus(status);
+  }
+
+  List<UserProfileModel>? removeBlockedUsers(List<UserProfileModel>? list){
+    UserProfileModel currentUser = _appLoginUser ?? appLoginUser!;
+    List<String> blockedIDs = currentUser.blockedUID;
+    for(String id in blockedIDs){
+      for(int i = 0; i < list!.length; ++i){
+        if(list[i].uid == id){
+          list.removeAt(i);
+        }
+      }
+    }
+    return list;
   }
 
 }
