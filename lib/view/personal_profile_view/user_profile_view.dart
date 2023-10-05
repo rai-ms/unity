@@ -108,20 +108,23 @@ class _UserProfileViewState extends State<UserProfileView> {
                                 return Consumer<UserProfileViewModel>(
                                     builder: (context, provider, child)
                                     {
-                                      return InkWell(
-                                        onTap: (){
-                                          provider.unBlockUser(widget.user.blockedUID[index]);
-                                          widget.user.blockedUID.removeAt(index);
-                                          provider.notifyListeners();
-                                        },
-                                        child: Container(
-                                          height: 60,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(100),
-                                            border: Border.all(color: AppColors.blueSplashScreen, width: 2),
+                                      return Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: InkWell(
+                                          onTap: (){
+                                            provider.unBlockUser(widget.user.blockedUID[index]);
+                                            widget.user.blockedUID.removeAt(index);
+                                            provider.notifyListeners();
+                                          },
+                                          child: Container(
+                                            height: 100,
+                                            width: 150,
+                                            decoration: BoxDecoration(
+                                              // borderRadius: BorderRadius.circular(100),
+                                              border: Border.all(color: AppColors.blueSplashScreen, width: 2),
+                                            ),
+                                            child: Center(child: Text(widget.user.blockedUID[index])),
                                           ),
-                                          child: Text(widget.user.blockedUID[index]),
                                         ),
                                       );
                                     }
