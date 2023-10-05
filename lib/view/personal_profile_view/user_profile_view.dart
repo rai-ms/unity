@@ -8,6 +8,9 @@ import 'package:unity/utils/app_helper/app_strings.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/view_model/home_view_model/home_view_model.dart';
 
+import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
+import '../../view_model/user_profile_view_model/user_profile_view_model.dart';
+
 class UserProfileView extends StatefulWidget {
   const UserProfileView({super.key, required this.user});
   final UserProfileModel user;
@@ -19,7 +22,10 @@ class _UserProfileViewState extends State<UserProfileView> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context)=> HomeViewModel())],
+      providers: [
+        ChangeNotifierProvider(create: (context)=> HomeViewModel()),
+        ChangeNotifierProvider(create: (context)=> UserProfileViewModel()),
+      ],
       child: Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -89,31 +95,43 @@ class _UserProfileViewState extends State<UserProfileView> {
               sizedBox(hei: 30),
               Text("Blocked Users", style: AppStyle.blackBold24,),
               (widget.user.blockedUID.isNotEmpty) ?
-                Column(
-                  children: [
-                    Text("Find Blocked User's UID's ${widget.user.blockedUID.length} \n         Tap to Unblock"),
-                    SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context,index)=>
-                          Consumer<HomeViewModel>(
-                            builder: (context, provider, child)
-                            {
-                              return Container(
-                                height: 60,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(color: AppColors.blueSplashScreen, width: 2),
-                                ),
-                                child: Text(widget.user.blockedUID[index]),
-                              );
-                            }
+                Consumer<UserProfileViewModel>(
+                  builder: (context, pro, child) {
+                    return Column(
+                      children: [
+                        Text("Find Blocked User's UID's ${widget.user.blockedUID.length} \n         Tap to Unblock"),
+                        SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context,index){
+                                return Consumer<UserProfileViewModel>(
+                                    builder: (context, provider, child)
+                                    {
+                                      return InkWell(
+                                        onTap: (){
+                                          provider.unBlockUser(widget.user.blockedUID[index]);
+                                          widget.user.blockedUID.removeAt(index);
+                                          provider.notifyListeners();
+                                        },
+                                        child: Container(
+                                          height: 60,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(100),
+                                            border: Border.all(color: AppColors.blueSplashScreen, width: 2),
+                                          ),
+                                          child: Text(widget.user.blockedUID[index]),
+                                        ),
+                                      );
+                                    }
+                                );
+                              },
+                          itemCount: widget.user.blockedUID.length,)
                         ),
-                      itemCount: widget.user.blockedUID.length,)
-                    ),
-                  ],
+                      ],
+                    );
+                  }
                 ):
                   const Text("No Blocked User Found!")
             ],

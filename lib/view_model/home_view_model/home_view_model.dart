@@ -60,28 +60,33 @@ class HomeViewModel extends ChangeNotifier {
   List<String> blockuID = [];
 
   bool isContains(String id){
+    for(String i in blockuID){
+      if(i == id) return true;
+    }
     return false;
   }
 
   Stream<List<UserProfileModel>> getAllUser()
   {
-    UserProfileModel currentUser = appLoginUser!;
+    UserProfileModel currentUser = _appLoginUser ?? appLoginUser!;
     blockuID = currentUser.blockedUID;
     // debugPrint("This code is running and fetching the users profile registered in the app");
    Stream<List<UserProfileModel>> profiles = UsersProfileFireStore.getAllUsers();
     // debugPrint("Profiles fetched! $profiles");
    profiles.map((List<UserProfileModel> usersProfile)async {
-     debugPrint("This code is running");
+     // debugPrint("This code is running");
      List<UserProfileModel> users = [];
      for(UserProfileModel profileModel in usersProfile){
        await updateAllMessage(profileModel.uid);
-      if (profileModel.uid != _auth.currentUser!.uid) {
-        {
+      if (profileModel.uid != _auth.currentUser!.uid && !isContains(profileModel.uid)) {
+          debugPrint("Item Added");
           users.add(profileModel);
-        }
+      }
+      else {
+        debugPrint("Item not Added");
       }
      }
-     debugPrint(users.length.toString());
+     // debugPrint(users.length.toString());
      return users;
    });
 

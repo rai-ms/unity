@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/message_model.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
+import 'package:unity/res/components/custom_toast.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
+import 'package:unity/utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 import 'package:unity/utils/routes/route_name.dart';
 import 'package:unity/view_model/third_user_view_model/third_user_view_model.dart';
 import '../../res/components/user_profile_circle_image.dart';
@@ -64,11 +66,18 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
                           ],
                         ),
                       ),
-                      Column(
-                        children: [
-                          const Icon(Icons.warning_amber, color: AppColors.blueSplashScreen,size: 40,),
-                          Text("Block User", style: AppStyle.blueSplashBold20,)
-                        ],
+                      InkWell(
+                        onTap: (){
+                          CustomToast(context: context, message:  "User is Blocked");
+                          UsersProfileFireStore.blockUser(widget.thirdUser.uid);
+                          Navigator.pushNamedAndRemoveUntil(context, RouteName.homeView, (route) => false);
+                        },
+                        child: Column(
+                          children: [
+                            const Icon(Icons.warning_amber, color: AppColors.blueSplashScreen,size: 40,),
+                            Text("Block User", style: AppStyle.blueSplashBold20,)
+                          ],
+                        ),
                       ),
                     ],
                   ),

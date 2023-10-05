@@ -111,32 +111,67 @@ class UsersProfileFireStore {
     }
   }
 
+  static List<String> blockUIDs = [];
+
+  static bool isContainsID(String id){
+    for(var i in blockUIDs){
+      if(i == id){
+        return true;
+      }
+    }
+    return false;
+  }
+
   /// This method is used to block/unblock the user, it add/remove the blocked UID in the List of UserModel BlockedUID
   static blockUser(String userUID ,{bool remove = false}) async
   {
+    blockUIDs.clear();
     final currentUserUID = _auth.currentUser?.uid;
-    List<String> blockUID = [];
+
     if (currentUserUID != null) {
-      final userDoc = FirebaseFirestore.instance.collection("users").doc(currentUserUID).get().then((value){
-        try{
+      await FirebaseFirestore.instance.collection("users").doc(currentUserUID).get().then((value){
+        debugPrint("Before Try is running");
+        try {
+          // Map<String, dynamic> mp = value.data() as Map<String, dynamic>;
+          // List<dynamic> listUIDS = mp['blockedUID'];
+          debugPrint("Try is running");
           final usersProfile = UserProfileModel.fromJson(value.data() as Map<String, dynamic>);
-          List<String> blockUID = usersProfile.blockedUID;
-        }catch(e){}
+          blockUIDs = usersProfile.blockedUID;
+          debugPrint("The length is ${blockUIDs.length.toString()}");
+        }
+        catch (e)
+        {
+          debugPrint("Exception occurred: $e");
+        }
+
         // debugPrint(value.data().toString() ?? "");
       });
+      debugPrint("checking for if");
       if(!remove){
-        blockUID.add(userUID);
+        debugPrint("Before add length ${blockUIDs.length.toString()}");
+        if(!isContainsID(userUID)){
+          blockUIDs.add(userUID);
+        }
+        else
+          {
+            debugPrint("User already blocked");
+          }
+
+        debugPrint("ID Added");
       }
       else
       {
-        for(int i = 0; i < blockUID.length; ++i){
-          if(blockUID[i] == userUID){
-            blockUID.removeAt(i);
+        debugPrint("checking for else");
+        for(int i = 0; i < blockUIDs.length; ++i){
+          if(blockUIDs[i] == userUID){
+            blockUIDs.removeAt(i);
+            debugPrint("ID Removed");
             break;
           }
         }
       }
-      FirebaseFirestore.instance.collection("users").doc(currentUserUID).update({"blockedUID":blockUID}).then((value) {}).onError((error, stackTrace){});
+      debugPrint(blockUIDs.length.toString() + "This is the lenght of the blocked UIds");
+      FirebaseFirestore.instance.collection("users").doc(currentUserUID).update({"blockedUID":blockUIDs}).then((value) {}).onError((error, stackTrace){});
     }
   }
 

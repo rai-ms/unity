@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
+import 'package:unity/res/components/custom_toast.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
 import 'package:unity/utils/routes/route_name.dart';
 
@@ -78,6 +79,8 @@ class UserProfileDialog extends StatelessWidget {
                         onTap: ()
                         {
                           UsersProfileFireStore.blockUser(user.uid);
+                          Navigator.pop(context);
+                          CustomToast(context: context, message: "User Blocked");
                         },
                         child: const Icon(Icons.warning_amber, color: AppColors.blueSplashScreen,)),
                   ],
