@@ -93,6 +93,9 @@ class _HomeViewState extends State<HomeView> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Consumer<HomeViewModel>(
                                       builder: (context, provider, child) {
+                                        if(provider.appLoginUser!.uid == null){
+                                          Future.delayed(const Duration(seconds: 1));
+                                        }
                                         if(users[index].uid == provider.appLoginUser!.uid){
                                           return const SizedBox();
                                         }

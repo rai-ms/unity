@@ -35,6 +35,7 @@ class HomeViewModel extends ChangeNotifier {
     });
     return chats;
   }
+
   // List<UserProfileModel> _usersProfile = [];
   // set usersProfile(value) => this
   // List<UserProfileModel> get usersProfile {

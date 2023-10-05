@@ -40,11 +40,12 @@ class ChatViewModel extends ChangeNotifier {
   }
 
 
-  forwardMessage(List<MessageModel> messageModel, String receiver) {
+  forwardMessage(List<MessageModel> messageModel, String receiver) async{
     DateTime now = DateTime.now();
     String time = now.toString();
     String chatID = now.millisecondsSinceEpoch.toString();
     for(int i = 0; i < messageModel.length; ++i){
+
       messageModel[i].chatID = chatID;
       messageModel[i].time = time;
       messageModel[i].sentTime = time;
@@ -59,6 +60,7 @@ class ChatViewModel extends ChangeNotifier {
       }).onError((error, stackTrace){
         debugPrint("Message not Sent $i");
       });
+      await Future.delayed(Duration(seconds: 1));
     }
 
     selectedMessages.clear();
@@ -185,7 +187,7 @@ class ChatViewModel extends ChangeNotifier {
   }
 
 
-  List<MessageModel> selectedMessages = [];
+  static List<MessageModel> selectedMessages = [];
   void addMessage(MessageModel messageModel){
     selectedMessages.add(messageModel);
   }
@@ -315,6 +317,9 @@ class ChatViewModel extends ChangeNotifier {
     });
   }
 
+  static resetData(){
+    selectedMessages.clear();
+  }
 
 
 }
