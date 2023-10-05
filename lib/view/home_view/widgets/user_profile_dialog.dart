@@ -7,16 +7,30 @@ import 'package:unity/utils/routes/route_name.dart';
 
 import '../../../utils/app_helper/app_color.dart';
 import '../../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
+import '../../../view_model/home_view_model/home_view_model.dart';
 
-class UserProfileDialog extends StatelessWidget {
+class UserProfileDialog extends StatefulWidget {
   const UserProfileDialog({super.key, required this.user});
   final UserProfileModel user;
+
+  @override
+  State<UserProfileDialog> createState() => _UserProfileDialogState();
+}
+
+class _UserProfileDialogState extends State<UserProfileDialog> {
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    HomeViewModel.setUserStatus(DateTime.now().toString());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(
-        maxHeight: 405
+        maxHeight: 404
       ),
       child: Column(
         children:
@@ -27,7 +41,7 @@ class UserProfileDialog extends StatelessWidget {
                 child: SizedBox(
                     height: 350,
                     width: 350,
-                    child: CachedNetworkImage(imageUrl: user.image, fit: BoxFit.fill,)),
+                    child: CachedNetworkImage(imageUrl: widget.user.image, fit: BoxFit.fill,)),
               ),
               Align(
                 alignment: Alignment.topLeft,
@@ -42,7 +56,7 @@ class UserProfileDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children:
                     [
-                      Text(user.name, style: AppStyle.whiteMedium16,)
+                      Text(widget.user.name, style: AppStyle.whiteMedium22,)
                     ],
                   ),
                 ),
@@ -51,7 +65,7 @@ class UserProfileDialog extends StatelessWidget {
           ),
           Container(
               decoration: const BoxDecoration(
-                color: AppColors.white
+                color: AppColors.blueSplashScreen
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -63,26 +77,26 @@ class UserProfileDialog extends StatelessWidget {
                     InkWell(
                         onTap: ()
                         {
-                          Navigator.pushNamedAndRemoveUntil(context, RouteName.chatView, arguments: {"user":user}, (route)=> route.isFirst);
+                          Navigator.pushNamedAndRemoveUntil(context, RouteName.chatView, arguments: {"user":widget.user}, (route)=> route.isFirst);
                           // Navigator.pushNamed(context, RouteName.chatView, arguments: {"user":user});
                         },
-                        child: const Icon(Icons.message_outlined, color: AppColors.blueSplashScreen,)),
+                        child: const Icon(Icons.message_outlined, color: AppColors.white,)),
                     InkWell(
                         onTap: ()
                         {
                           // ThirdUserInfoView
-                          Navigator.pushNamedAndRemoveUntil(context, RouteName.thirdUserInfoView, arguments: {"user":user}, (route)=> route.isFirst);
+                          Navigator.pushNamedAndRemoveUntil(context, RouteName.thirdUserInfoView, arguments: {"user":widget.user}, (route)=> route.isFirst);
 
                         },
-                        child: const Icon(Icons.info_outline_rounded, color: AppColors.blueSplashScreen,)),
+                        child: const Icon(Icons.info_outline_rounded, color: AppColors.white,)),
                     InkWell(
                         onTap: ()
                         {
-                          UsersProfileFireStore.blockUser(user.uid);
+                          UsersProfileFireStore.blockUser(widget.user.uid);
                           Navigator.pop(context);
                           CustomToast(context: context, message: "User Blocked");
                         },
-                        child: const Icon(Icons.warning_amber, color: AppColors.blueSplashScreen,)),
+                        child: const Icon(Icons.warning_amber, color: AppColors.white,)),
                   ],
                 ),
               ))

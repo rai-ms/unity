@@ -10,7 +10,9 @@ import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStor
 class HomeViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   UsersProfileFireStore? user;
-  signOut(BuildContext context) {
+  signOut(BuildContext context) async {
+    HomeViewModel.setUserStatus(DateTime.now().toString());
+    await Future.delayed(Duration(seconds: 2));
     _auth.signOut();
     Navigator.pushNamedAndRemoveUntil(context, RouteName.loginView, (route)=> false);
   }
@@ -47,7 +49,7 @@ class HomeViewModel extends ChangeNotifier {
   //   });
   //   return _usersProfile;
   // }
-  UserProfileModel? _appLoginUser;
+  static UserProfileModel? _appLoginUser;
   bool isLogin = false;
   UserProfileModel? get appLoginUser {
     if (!isLogin) {
@@ -56,8 +58,15 @@ class HomeViewModel extends ChangeNotifier {
     }
     return _appLoginUser;
   }
+  static setUser(UserProfileModel? setUser){
+    _appLoginUser = setUser;
+  }
 
-  List<String> blockuID = [];
+  static List<String> blockuID = [];
+  static setBlockUID()
+  {
+    blockuID = _appLoginUser!.blockedUID;
+  }
 
   bool isContains(String id){
     for(String i in blockuID){
@@ -68,8 +77,9 @@ class HomeViewModel extends ChangeNotifier {
 
   Stream<List<UserProfileModel>> getAllUser()
   {
-    UserProfileModel currentUser = _appLoginUser ?? appLoginUser!;
-    blockuID = currentUser.blockedUID;
+
+    // UserProfileModel? currentUser = _appLoginUser ?? appLoginUser!;
+    // blockuID = _appLoginUser!.blockedUID;
     // debugPrint("This code is running and fetching the users profile registered in the app");
    Stream<List<UserProfileModel>> profiles = UsersProfileFireStore.getAllUsers();
     // debugPrint("Profiles fetched! $profiles");
@@ -102,11 +112,11 @@ class HomeViewModel extends ChangeNotifier {
       debugPrint(message);
       if(message.toString().contains("pause")) {
         // set here for last active time
-        setUserStatus(false);
+        setUserStatus(DateTime.now().toString());
       }
       else if(message.toString().contains('resume')){
         // set here for Online
-        setUserStatus(true);
+        setUserStatus("true");
       }
       return Future.value(message);
     });
@@ -134,16 +144,17 @@ class HomeViewModel extends ChangeNotifier {
     return UsersProfileFireStore.getCurrentUserProfile(uID);
   }
 
-  static setUserStatus(bool status)
+  static setUserStatus(String status)
   {
     UsersProfileFireStore.updateStatus(status);
   }
 
   List<UserProfileModel>? removeBlockedUsers(List<UserProfileModel>? list){
-    UserProfileModel currentUser = _appLoginUser ?? appLoginUser!;
-    List<String> blockedIDs = currentUser.blockedUID;
+    UserProfileModel? currentUser = _appLoginUser;
+    List<String> blockedIDs = currentUser?.blockedUID ?? [""];
     for(String id in blockedIDs){
-      for(int i = 0; i < list!.length; ++i){
+      if(list == null) return null;
+      for(int i = 0; i < list.length; ++i){
         if(list[i].uid == id){
           list.removeAt(i);
         }

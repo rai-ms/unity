@@ -11,6 +11,7 @@ import 'package:unity/view/chat_view/widgets/delete_dailog.dart';
 import 'package:unity/view_model/chat_view_model/chat_view_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/app_strings.dart';
+import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key, required this.receiverData});
@@ -25,6 +26,7 @@ class _ChatViewState extends State<ChatView> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: AppColors.blueSplashScreen,
         title: Consumer<ChatViewModel>(
             builder: (context, provider, child)
             {
@@ -39,14 +41,14 @@ class _ChatViewState extends State<ChatView> {
                         {
                             Navigator.pop(context);
                         },
-                        child: const Icon(Icons.arrow_back)),
+                        child: const Icon(Icons.arrow_back, color: AppColors.white,)),
                     sizedBox(wid: 20),
                     Hero(
                       tag: "Profile",
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
+                          border: Border.all(color: AppColors.white, width: 1.0,),
                         ),
                         child: ClipOval(
                           child: CachedNetworkImage(
@@ -58,13 +60,24 @@ class _ChatViewState extends State<ChatView> {
                       ),
                     ),
                     sizedBox(wid: 20),
-                    Text(widget.receiverData.name),
-                    StreamBuilder(
-                        stream: provider.getStatus(widget.receiverData.uid),
-                        builder: (context,isActive){
-                          if(!isActive.hasData || isActive.connectionState == ConnectionState.waiting) return const SizedBox();
-                          return Icon(Icons.circle, color: provider.isOnline? AppColors.green:AppColors.grey,);
-                        }),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.receiverData.name, style: AppStyle.whiteMedium22,),
+                        StreamBuilder(
+                            stream: provider.getStatus(widget.receiverData.uid),
+                            builder: (context,isActive){
+                              if(!isActive.hasData || isActive.connectionState == ConnectionState.waiting) return const SizedBox();
+                              return provider.isOnline? Row(
+                                children: [
+                                  const Icon(Icons.circle, color:AppColors.green,),
+                                  Text("Online",style: AppStyle.whiteMedium16,),
+                                ],
+                              ) : Text("Last seen: ${UsersProfileFireStore.offlineTime.substring(11, 16)}", style: AppStyle.whiteMedium16,);
+                            }),
+                      ],
+                    ),
+                    sizedBox(wid: 20),
                     // Icon(Icons.circle, color: widget.receiverData.onLineStatus == 1? AppColors.green : AppColors.grey,)
                   ],
                 ),
@@ -76,7 +89,7 @@ class _ChatViewState extends State<ChatView> {
                       onTap: (){
                         provider.removeAllFromList();
                       },
-                  child: const Icon(Icons.arrow_back)),
+                  child: const Icon(Icons.arrow_back, color: AppColors.white,)),
                   Row(
                    children: [
                      if(provider.selectedMessages.length == 1)
@@ -85,12 +98,12 @@ class _ChatViewState extends State<ChatView> {
                            if(provider.isAvailableToStar()) InkWell(onTap:(){
                              provider.toggleStar();
                            },
-                               child: const Icon(Icons.star)),
+                               child: const Icon(Icons.star, color: AppColors.white,)),
                            const SizedBox(width: 20,),
                            InkWell(onTap:(){
                              provider.copyToClipboard(context);
                            },
-                               child: const Icon(Icons.copy)),
+                               child: const Icon(Icons.copy, color: AppColors.white,)),
                          ],
                        ),
                      const SizedBox(width: 20,),
@@ -101,13 +114,13 @@ class _ChatViewState extends State<ChatView> {
                             showDialog(context: context, builder: (context)=> DeleteDialog(deleteForMe: provider.deleteForMe,deleteForAll: provider.deleteForAll,isDeleteForAll:deleteAll ,));
                              // provider.deleteMessages();
                          },
-                         child: const Icon(Icons.delete, size: 35,)),
+                         child: const Icon(Icons.delete, size: 35, color: AppColors.white,)),
                      const SizedBox(width: 20,),
                      InkWell(
                          onTap: (){
                            Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
                          },
-                         child: const Icon(Icons.forward, size: 35,)),
+                         child: const Icon(Icons.forward, size: 35, color: AppColors.white,)),
                      const SizedBox(width: 10,),
                    ],
                  )

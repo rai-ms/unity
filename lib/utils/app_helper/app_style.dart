@@ -100,6 +100,14 @@ class AppStyle {
     );
   }
 
+  static TextStyle? get whiteMedium22 {
+    return const TextStyle(
+      color: AppColors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.w500,
+    );
+  }
+
   static TextStyle? get whiteMedium10 {
     return const TextStyle(
       color: AppColors.white,

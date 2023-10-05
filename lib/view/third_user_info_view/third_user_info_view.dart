@@ -27,7 +27,6 @@ class _ThirdUserInfoViewState extends State<ThirdUserInfoView> {
     ThirdUserViewModel.thirdUser = widget.thirdUser;
     loadImages();
   }
-
   void loadImages() async {
     // images = await ThirdUserViewModel().getAllImages();
   }

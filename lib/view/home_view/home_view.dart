@@ -12,7 +12,6 @@ import '../../services/unknown_page_service.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
-
   @override
   State<HomeView> createState() => _HomeViewState();
 }
@@ -26,10 +25,10 @@ class _HomeViewState extends State<HomeView>
     {
       debugPrint(message);
       if(message.toString().contains("pause")) {
-        HomeViewModel.setUserStatus(false);
+        HomeViewModel.setUserStatus(DateTime.now().toString());
       }
       else if(message.toString().contains('resume')){
-        HomeViewModel.setUserStatus(true);
+        HomeViewModel.setUserStatus("true");
       }
       return Future.value(message);
     });
@@ -100,32 +99,39 @@ class _HomeViewState extends State<HomeView>
                                         if(users![index].uid == provider.appLoginUser!.uid){
                                           return const SizedBox();
                                         }
-                                    return ListTile(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, RouteName.chatView,
-                                            arguments: {"user": users![index]});
-                                      },
-                                      title: Text(users[index].name),
-                                      // trailing: Text(provider.countMessage.toString()),
-                                      leading: InkWell(
-                                        onTap: (){
-                                          showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users![index],)));
+                                    return Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: AppColors.blueSplashScreen, width: 1),
+                                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), bottomRight:Radius.circular(10) )
+                                      ),
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, RouteName.chatView,
+                                              arguments: {"user": users![index]});
                                         },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: AppColors
-                                                  .blueSplashScreen, // Set your desired border color here
-                                              width: 2.0, // Set the border width
+                                        title: Text(users[index].name, style: AppStyle.blackBold24,),
+                                        // trailing: Text(provider.countMessage.toString()),
+                                        leading: InkWell(
+                                          onTap: (){
+                                            showDialog(context: context, builder: (context)=> Dialog(child: UserProfileDialog(user: users![index],)));
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: AppColors
+                                                    .blueSplashScreen, // Set your desired border color here
+                                                width: 2.0, // Set the border width
+                                              ),
                                             ),
-                                          ),
-                                          child: ClipOval(
-                                            child: CachedNetworkImage(
-                                              imageUrl: users[index].image,
-                                              height: 50,
-                                              width: 50,
+                                            child: ClipOval(
+                                              child: CachedNetworkImage(
+                                                imageUrl: users[index].image,
+                                                height: 50,
+                                                width: 50,
+                                              ),
                                             ),
                                           ),
                                         ),

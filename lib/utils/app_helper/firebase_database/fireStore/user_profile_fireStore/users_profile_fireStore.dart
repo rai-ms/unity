@@ -102,7 +102,7 @@ class UsersProfileFireStore {
     });
   }
   // Update user's online status to "online" when they log in
-  static updateStatus(bool status) async
+  static updateStatus(String status) async
   {
     final currentUserUID = _auth.currentUser?.uid;
     if (currentUserUID != null) {
@@ -182,6 +182,9 @@ class UsersProfileFireStore {
       final data = snapshot.data();
       if (data != null && data.containsKey("onLineStatus")) {
         streamController.add(data["onLineStatus"]  == "true"? true: false);
+        if(data["onLineStatus"]  != "true"){
+          offlineTime = data["onLineStatus"];
+        }
       }
       else
       {
@@ -190,5 +193,7 @@ class UsersProfileFireStore {
     });
     return streamController.stream;
   }
+
+  static String offlineTime = "";
 
 }

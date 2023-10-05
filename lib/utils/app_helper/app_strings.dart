@@ -37,7 +37,7 @@ class AppStrings {
   static const String hello = "Hello!";
   static const String createAnAccount = "Create an account to continue";
   static const String emptyString = "";
-  static const String appName = "Shop Heaven";
+  static const String appName = "Unity";
   static const String dontHaveAccount = "Don't have account? ";
   static const String alreadyHaveAccount = "Already have account? ";
   static const String noNetwork = "No Network ";

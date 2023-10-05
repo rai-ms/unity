@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:unity/res/components/custom_toast.dart';
 import 'package:unity/utils/routes/route_name.dart';
 
+import '../home_view_model/home_view_model.dart';
+
 class LoginViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController mailCont = TextEditingController();
@@ -39,8 +41,10 @@ class LoginViewModel extends ChangeNotifier {
       );
 
       setLoading(false);
+
       if(context.mounted)
       {
+        HomeViewModel.setUserStatus("true");
         Navigator.pushNamedAndRemoveUntil(
           context, RouteName.homeView, (route) => false,
         );

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:unity/view_model/home_view_model/home_view_model.dart';
 import '../model/firebase/user_profile_model.dart';
 import '../utils/app_helper/firebase_database/fireStore/user_profile_fireStore/users_profile_fireStore.dart';
 import '../utils/routes/route_name.dart';
@@ -14,6 +15,9 @@ class SplashScreenServices {
     if (user != null) {
       UsersProfileFireStore.getCurrentUserProfile(user.uid).map((event){
         userProfileModel = event;
+        HomeViewModel.setUser(userProfileModel);
+        HomeViewModel.setBlockUID();
+        HomeViewModel.setUserStatus("true");
         debugPrint("ABCD$userProfileModel");
       });
       await Future.delayed(const Duration(seconds: 3));

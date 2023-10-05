@@ -120,7 +120,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                                             height: 100,
                                             width: 150,
                                             decoration: BoxDecoration(
-                                              // borderRadius: BorderRadius.circular(100),
+                                              borderRadius: BorderRadius.circular(10),
                                               border: Border.all(color: AppColors.blueSplashScreen, width: 2),
                                             ),
                                             child: Center(child: Text(widget.user.blockedUID[index])),
