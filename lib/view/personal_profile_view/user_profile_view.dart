@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unity/global/global.dart';
 import 'package:unity/model/firebase/user_profile_model.dart';
 import 'package:unity/res/components/user_profile_circle_image.dart';
 import 'package:unity/utils/app_helper/app_color.dart';
 import 'package:unity/utils/app_helper/app_strings.dart';
 import 'package:unity/utils/app_helper/app_style.dart';
+import 'package:unity/view_model/home_view_model/home_view_model.dart';
 
 class UserProfileView extends StatefulWidget {
   const UserProfileView({super.key, required this.user});
@@ -16,7 +18,9 @@ class UserProfileView extends StatefulWidget {
 class _UserProfileViewState extends State<UserProfileView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context)=> HomeViewModel())],
+      child: Scaffold(
       appBar: AppBar(
         leading: InkWell(
             onTap: (){
@@ -31,15 +35,24 @@ class _UserProfileViewState extends State<UserProfileView> {
             Text(AppStrings.profile, style: AppStyle.whiteBold30,),
           ],
         ),
+        actions: [
+          Consumer<HomeViewModel>(
+            builder: (context, provider, child) {
+              return InkWell(
+                  onTap: (){
+                      provider.signOut(context);
+                  },
+                  child: const Icon(Icons.exit_to_app, color: AppColors.white,));
+            }
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
           child: Column (
             children: [
               sizedBox(hei: 30),
-              Flexible(
-                child: userProfileImageInCircle(widget.user.image.toString()),
-              ),
+              userProfileImageInCircle(widget.user.image.toString()),
               sizedBox(hei: 30),
               ListTile(
                 leading:const Icon(Icons.person, color: AppColors.blueSplashScreen,),
@@ -47,7 +60,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Name", style: AppStyle.greyRegular20,),
-                    Text(widget.user.name.toString() ?? "", style: AppStyle.blackBold24,),
+                    Text(widget.user.name.toString(), style: AppStyle.blackBold24,),
                   ],
                 ),
                 trailing: const Icon(Icons.edit, color: AppColors.blueSplashScreen,),
@@ -69,14 +82,45 @@ class _UserProfileViewState extends State<UserProfileView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Contact", style: AppStyle.greyRegular20,),
-                    Text(widget.user.email.toString() ?? "", style: AppStyle.blackNormal20,),
+                    Text(widget.user.email.toString(), style: AppStyle.blackNormal20,),
                   ],
                 ),
               ),
+              sizedBox(hei: 30),
+              Text("Blocked Users", style: AppStyle.blackBold24,),
+              (widget.user.blockedUID.isNotEmpty) ?
+                Column(
+                  children: [
+                    Text("Find Blocked User's UID's ${widget.user.blockedUID.length} \n         Tap to Unblock"),
+                    SizedBox(
+                        height: 100,
+                        width: 350,
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context,index)=>
+                        // Consumer<HomeViewModel>(
+                        //   builder: (context, provider, child)
+                        //   {
+                        //     StreamBuilder(stream: provider.getUserProfileData(widget.user.blockedUID[index]), builder: (context, value){
+                        //
+                        //       return Container(
+                        //         child: Text("${widget.user.blockedUID[index]}"),
+                        //       );
+                        //     },);
+                        //
+                        //   }
+                        // ),
+                           Text(widget.user.blockedUID[index]),
+                      itemCount: widget.user.blockedUID.length,)
+                    ),
+                  ],
+                ):
+                  const Text("No Blocked User Found!")
             ],
           ),
         ),
       ),
+    ),
     );
   }
 }

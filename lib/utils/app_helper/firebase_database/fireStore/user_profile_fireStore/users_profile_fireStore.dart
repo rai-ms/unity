@@ -7,8 +7,10 @@ import '../../../../../model/firebase/user_profile_model.dart';
 
 
 class UsersProfileFireStore {
+
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final storeRef = FirebaseFirestore.instance.collection("users");
+
   /// This is done to create the account of the user, to get the UID
   Future<bool?> createUserAccount(String email, String pass) async {
     await _auth
@@ -27,6 +29,7 @@ class UsersProfileFireStore {
     return null;
   }
 
+
   Future<bool> loginUser(String email, String pass) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email.trim(), password: pass.trim()).then((value)
@@ -41,6 +44,7 @@ class UsersProfileFireStore {
     }
     return false;
   }
+
 
   Future<bool> registerUser(UserProfileModel user) async {
     await storeRef.doc(user.uid).set(user.toMap()).then((value) {
@@ -60,6 +64,13 @@ class UsersProfileFireStore {
     return fireStoreStream;
   }
 
+  getBlockedUsers()
+  {
+    final currentUserSnapShot = storeRef.doc(_auth.currentUser!.uid.toString()).snapshots();
+    final data = currentUserSnapShot.map((event){
+
+    });
+  }
 
   /// This method will returns all the users except current user
   static Stream<List<UserProfileModel>> getAllUsers() {

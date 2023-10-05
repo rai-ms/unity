@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:unity/utils/routes/route_name.dart';
 import '../../model/firebase/message_model.dart';
 import '../../model/firebase/user_profile_model.dart';
 import '../../utils/app_helper/firebase_database/fireStore/chat_fireStore/users_chat.dart';
@@ -9,8 +10,9 @@ import '../../utils/app_helper/firebase_database/fireStore/user_profile_fireStor
 class HomeViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   UsersProfileFireStore? user;
-  signOut() {
+  signOut(BuildContext context) {
     _auth.signOut();
+    Navigator.pushNamedAndRemoveUntil(context, RouteName.loginView, (route)=> false);
   }
 
   updateAllMessage(String receiver) {
@@ -113,6 +115,10 @@ class HomeViewModel extends ChangeNotifier {
       // Notify listeners (if this method is part of a ChangeNotifier).
       notifyListeners();
     });
+  }
+
+  Stream<UserProfileModel?> getUserProfileData(String uID){
+    return UsersProfileFireStore.getCurrentUserProfile(uID);
   }
 
   static setUserStatus(bool status)

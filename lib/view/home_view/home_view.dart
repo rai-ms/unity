@@ -55,16 +55,6 @@ class _HomeViewState extends State<HomeView> {
           ),
           actions: [
             Consumer<HomeViewModel>(builder: (context, provider, child) {
-              return InkWell(
-                onTap: () {
-                  provider.signOut();
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, RouteName.loginView, (route) => false);
-                },
-                child: const Icon(Icons.logout_outlined),
-              );
-            }),
-            Consumer<HomeViewModel>(builder: (context, provider, child) {
               if(provider.appLoginUser == null){
                 return const SizedBox();
               }
@@ -72,7 +62,7 @@ class _HomeViewState extends State<HomeView> {
                   onTap: (){
                     Navigator.pushNamed(context, RouteName.userProfileView, arguments: {'user':provider.appLoginUser});
                   },
-                  child: const Icon(Icons.settings));
+                  child: const Icon(Icons.menu));
             }),
           ],
         ),

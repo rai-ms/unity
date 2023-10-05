@@ -30,7 +30,7 @@ class _ChatViewState extends State<ChatView> {
             {
               return provider.selectedMessages.isEmpty? InkWell(
                 onTap: (){
-                  Navigator.pushNamed(context, RouteName.thirdUserInfoView, arguments: {"user" : widget.receiverData});
+                  Navigator.pushNamedAndRemoveUntil(context, RouteName.thirdUserInfoView, arguments: {"user" : widget.receiverData}, (route)=> route.isFirst);
                 },
                 child: Row(
                   children: [
@@ -41,16 +41,19 @@ class _ChatViewState extends State<ChatView> {
                         },
                         child: const Icon(Icons.arrow_back)),
                     sizedBox(wid: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
-                      ),
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: widget.receiverData.image,
-                          height: 50,
-                          width: 50,
+                    Hero(
+                      tag: "Profile",
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.blueSplashScreen, width: 2.0,),
+                        ),
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: widget.receiverData.image,
+                            height: 50,
+                            width: 50,
+                          ),
                         ),
                       ),
                     ),

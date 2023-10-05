@@ -116,9 +116,9 @@ class UsersChat {
     }
   }
 
-  static getCurrentUserLastMessage(String receiverUID){
+  static getCurrentUserLastMessage(String receiverUID)
+  {
     final chatRoomId = getChatRoomId(_auth.currentUser!.uid, receiverUID);
     final messageCollection = storeRef.doc(chatRoomId).collection("messages").limit(1).snapshots();
   }
-
 }

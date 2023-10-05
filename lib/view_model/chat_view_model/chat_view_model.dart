@@ -54,10 +54,15 @@ class ChatViewModel extends ChangeNotifier {
       messageModel[i].visibleNo = 3;
       messageModel[i].status = 0;
       messageModel[i].star = 0;
-      UsersChat.sendMessage(messageModel[i]);
+      UsersChat.sendMessage(messageModel[i]).then((value) {
+        debugPrint("Message Sent $i");
+      }).onError((error, stackTrace){
+        debugPrint("Message not Sent $i");
+      });
     }
 
-
+    selectedMessages.clear();
+    notifyListeners();
   }
 
 

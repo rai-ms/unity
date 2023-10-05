@@ -9,6 +9,7 @@ class SplashScreenServices {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
   static checkAuthentication(BuildContext context) async {
+
     var user = _auth.currentUser;
     if (user != null) {
       UsersProfileFireStore.getCurrentUserProfile(user.uid).map((event){
