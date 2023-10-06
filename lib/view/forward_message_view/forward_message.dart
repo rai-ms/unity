@@ -46,7 +46,7 @@ class _ForwardMessageViewState extends State<ForwardMessageView> {
                               providerChat.forwardMessage(widget.messagesList, users[index].uid);
                               Future.delayed(const Duration(seconds: 1));
                               providerChat.selectedMessages.clear();
-                              Navigator.pushNamedAndRemoveUntil(context, RouteName.chatView, arguments: {"user": widget.receiverData},(route) => route.isFirst);
+                              Navigator.pushNamedAndRemoveUntil(context, RouteName.chatView, arguments: {"user": users[index]},(route) => route.isFirst);
                             },
                             leading: ClipOval(
                               child: CachedNetworkImage(

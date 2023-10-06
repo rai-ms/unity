@@ -48,7 +48,7 @@ class ChatViewModel extends ChangeNotifier {
       messageModel[i].chatID = chatID;
       messageModel[i].time = time;
       messageModel[i].sentTime = time;
-      messageModel[i].isForwarded = 1;
+      messageModel[i].isForwarded = 1 + messageModel[i].isForwarded;
       messageModel[i].senderUID = _auth.currentUser!.uid;
       messageModel[i].receiverUID = receiver;
       messageModel[i].visibleNo = 3;

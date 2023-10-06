@@ -203,12 +203,12 @@ class _ChatViewState extends State<ChatView> {
                                                   crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                                   children: [
                                                     if(messages[index].star == 1) const Icon(Icons.star, color: AppColors.white,),
-                                                    if(messages[index].isForwarded == 1) SizedBox(
+                                                    if(messages[index].isForwarded != 0) SizedBox(
                                                       width: 100,
                                                       child: Row(
                                                         children: [
                                                           const Icon(Icons.forward_outlined, color: AppColors.white,),
-                                                          Text(AppStrings.forwarded, style: AppStyle.whiteMedium16,)
+                                                          Text((messages[index].isForwarded == 1) ? AppStrings.forwarded : AppStrings.multiForwarded, style: AppStyle.whiteMedium16,)
                                                         ],),
                                                     ),
                                                     if (isImage) Container(
