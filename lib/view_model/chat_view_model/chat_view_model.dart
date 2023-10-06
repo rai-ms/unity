@@ -41,10 +41,10 @@ class ChatViewModel extends ChangeNotifier {
 
 
   forwardMessage(List<MessageModel> messageModel, String receiver) {
-    DateTime now = DateTime.now();
-    String time = now.toString();
-    String chatID = now.millisecondsSinceEpoch.toString();
     for(int i = 0; i < messageModel.length; ++i){
+      DateTime now = DateTime.now();
+      String time = now.toString();
+      String chatID = now.millisecondsSinceEpoch.toString();
       messageModel[i].chatID = chatID;
       messageModel[i].time = time;
       messageModel[i].sentTime = time;
@@ -67,7 +67,7 @@ class ChatViewModel extends ChangeNotifier {
 
 
   pickAndSendImage(String receiver) async {
-    debugPrint("pick going to upload");
+    // debugPrint("pick going to upload");
     await requestPermission(receiver);
 
   }
@@ -77,19 +77,20 @@ class ChatViewModel extends ChangeNotifier {
 
     // Check the permission status
     if (status.isGranted) {
-      debugPrint("Permission Granted");
+      // debugPrint("Permission Granted");
       await fetchImage();
-      debugPrint("Image Fetched going to upload");
+      // debugPrint("Image Fetched going to upload");
       await uploadImage(receiver);
-      debugPrint("Image Uploaded");
+      // debugPrint("Image Uploaded");
 
     } else {
-      debugPrint("Permission not granted in else");
-      debugPrint("Going to fetch image in else");
+
+      // debugPrint("Permission not granted in else");
+      // debugPrint("Going to fetch image in else");
       await fetchImage();
-      debugPrint("Image fetched going to upload in else");
+      // debugPrint("Image fetched going to upload in else");
       await uploadImage(receiver);
-      debugPrint("Going to upload in else");
+      // debugPrint("Going to upload in else");
       // openAppSettings();
     }
   }
@@ -115,7 +116,7 @@ class ChatViewModel extends ChangeNotifier {
 
     List<String> l = [r,s];
     l.sort();
-    debugPrint("returning chat id");
+    // debugPrint("returning chat id");
     return l.join("_");
 
   }

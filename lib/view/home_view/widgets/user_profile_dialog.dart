@@ -21,7 +21,6 @@ class _UserProfileDialogState extends State<UserProfileDialog> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     HomeViewModel.setUserStatus(DateTime.now().toString());
     super.dispose();
   }

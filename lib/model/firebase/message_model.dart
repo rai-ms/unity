@@ -7,6 +7,7 @@ class MessageModel {
 
   /// [isForwarded] == 1 ? It marked as forwarded
   /// [isForwarded] == 0 ? It marked as a normal message
+  /// [isForwarded] > 1 ? It marked as a multi forwarded message
   int isForwarded;
 
   /// if [visibleNo] == 0? message won't be visible to anyone,

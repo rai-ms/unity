@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:unity/global/global.dart';
@@ -37,7 +38,7 @@ class _IntroViewState extends State<IntroView> {
                   height: double.infinity,
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: AppColors.blueSplashScreen,
+                    color: AppColors.white,
                   ),
                   child: Column(
                     children: [
@@ -67,19 +68,19 @@ class _IntroViewState extends State<IntroView> {
                   ),
                   child: Column(
                     children: [
-                      sizedBox(hei: 50),
+                      CachedNetworkImage(imageUrl: "https://i.pinimg.com/originals/96/e6/87/96e687ee319fb5ef7d147ddc325ef4d7.gif", ),
                       Padding(
                         padding: const EdgeInsets.all(28.0),
                         child: Text(
-                          "Get Closer To EveryOne",
-                          style: AppStyle.blackNormal36,
+                          "Chat with multiple people",
+                          style: AppStyle.whiteMedium22,
                         ),
                       ),
                       Text(
-                        "Helps you to contact everyone with just easy way",
-                        style: AppStyle.blackNormal15,
+                        "Just like you playing multiple games same time",
+                        style: AppStyle.whiteMedium16,
+                        textAlign: TextAlign.center,
                       ),
-                      Image.asset(AppImages.introPeople),
                     ],
                   ),
                 ),
@@ -93,22 +94,29 @@ class _IntroViewState extends State<IntroView> {
                   ),
                   child: Stack(
                     children: [
-                      Column(
-                        children: [
-                          sizedBox(hei: 50),
-                          Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: Text(
-                              "Get Closer To EveryOne",
-                              style: AppStyle.blackNormal36,
+                      Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Let's Start",
+                              style: AppStyle.whiteBold30,
                             ),
-                          ),
-                          Text(
-                            "Helps you to contact everyone with just easy way",
-                            style: AppStyle.blackNormal15,
-                          ),
-                          Image.asset(AppImages.introPeople),
-                        ],
+                            Text(
+                              "The Journey...",
+                              style: AppStyle.whiteMedium16,
+
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(left: 148.0),
+                            //   child: Text(
+                            //     "With Us",
+                            //     style: AppStyle.whiteBold20,
+                            //   ),
+                            // ),
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 78.0),

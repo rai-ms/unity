@@ -14,7 +14,19 @@ class LoginViewModel extends ChangeNotifier {
   FocusNode emailFocusNode = FocusNode();
   FocusNode passFocusNode = FocusNode();
   FocusNode buttonFocusNode = FocusNode();
-  GlobalKey formkey = GlobalKey();
+  GlobalKey<FormState> formkey = GlobalKey();
+
+  @override
+  void dispose() {
+    mailCont.dispose();
+    passFocusNode.dispose();
+    passCont.dispose();
+    emailFocusNode.dispose();
+    formkey.currentState!.dispose();
+    buttonFocusNode.dispose();
+
+    super.dispose();
+  }
 
   bool _obsText = false;
   bool get obsText => _obsText;
@@ -31,36 +43,40 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
   login(BuildContext context) async {
-    setLoading(true);
-
-    try {
-      await _auth.signInWithEmailAndPassword(
-        email: mailCont.text.toString().trim(),
-        password: passCont.text.toString().trim(),
-      );
-
-      setLoading(false);
-
-      if(context.mounted)
-      {
-        HomeViewModel.setUserStatus("true");
-        Navigator.pushNamedAndRemoveUntil(
-          context, RouteName.homeView, (route) => false,
+    formkey.currentState!.save();
+    if(formkey.currentState!.validate()){
+      setLoading(true);
+      try {
+        await _auth.signInWithEmailAndPassword(
+          email: mailCont.text.toString().trim(),
+          password: passCont.text.toString().trim(),
         );
-      }
-    } catch (error) {
-      setLoading(false);
-      if (error is SocketException) {
-        // Handle SocketException (when data is off)
+
+        setLoading(false);
+
         if(context.mounted)
         {
-          CustomToast(context: context, message: "Data is Off");
+          HomeViewModel.setUserStatus("true");
+          Navigator.pushNamedAndRemoveUntil(
+            context, RouteName.homeView, (route) => false,
+          );
         }
-      } else {
-        if(context.mounted)
-        {
-          CustomToast(context: context, message: "Wrong Credentials");
+      } catch (error) {
+        setLoading(false);
+        if (error is SocketException) {
+          // Handle SocketException (when data is off)
+          if(context.mounted)
+          {
+            CustomToast(context: context, message: "Data is Off");
+          }
+        } else {
+          if(context.mounted)
+          {
+            CustomToast(context: context, message: "Wrong Credentials");
+          }
         }
       }
     }

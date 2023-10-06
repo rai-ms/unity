@@ -118,7 +118,8 @@ class _ChatViewState extends State<ChatView> {
                      const SizedBox(width: 20,),
                      InkWell(
                          onTap: (){
-                           Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData});
+
+                           Navigator.pushNamed(context, RouteName.forwardMessageView, arguments: {"messagesList" :provider.selectedMessages, "receiverData":widget.receiverData},);
                          },
                          child: const Icon(Icons.forward, size: 35, color: AppColors.white,)),
                      const SizedBox(width: 10,),
@@ -187,7 +188,10 @@ class _ChatViewState extends State<ChatView> {
                                             },
                                             onDoubleTap: () {},
                                             onLongPress: (){
-                                              showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],),));
+                                               showDialog(context: context, builder: (context)=>Dialog(child: ChatInfoDialog(messageModel: messages[index],context: context,),));
+                                              // showDialog(context: context, builder: (context) => Dialog(
+                                              //   child: Text("Hii"),
+                                              // ));
                                             },
                                             child: Card(
                                               child: Container(

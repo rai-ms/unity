@@ -17,6 +17,7 @@ class AppStrings {
   static const String deleteForAll = "Delete for All";
   static const String deleteForMe = "Delete for Me";
   static const String forwarded = "Forwarded";
+  static const String multiForwarded = "M-For";
   static const String oo = "00:00:00.000";
   static const String accountCreation = "Account Creation Failed, fill each and every thing correctly";
   static const String passwordAndConfirm = "Password and Confirm Password can't be same";

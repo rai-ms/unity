@@ -37,11 +37,6 @@ class _SplashViewState extends State<SplashView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.home_max_outlined,
-                  color: AppColors.white,
-                  size: 50,
-                ),
                 const Text(
                   AppStrings.appName,
                   style: TextStyle(
@@ -49,6 +44,11 @@ class _SplashViewState extends State<SplashView> {
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+                const Icon(
+                  Icons.home_max_outlined,
+                  color: AppColors.white,
+                  size: 50,
                 ),
                 SizedBox(
                   width: 200,
