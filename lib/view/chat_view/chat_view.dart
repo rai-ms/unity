@@ -156,8 +156,11 @@ class _ChatViewState extends State<ChatView> {
                       else
                       {
                         return ListView.builder(
-                          itemBuilder: (context, index)
+                          reverse: true,
+                          itemBuilder: (context, indexx)
                           {
+                            int size = messages.length;
+                            int index = size-indexx-1;
                             bool isSender = messages[index].senderUID == provider.auth.currentUser!.uid;
                             bool isImage = messages[index].img != null && messages[index].img != "";
                             String image = messages[index].img ?? "";
